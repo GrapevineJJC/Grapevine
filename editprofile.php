@@ -5,7 +5,7 @@ function editprofile(){
 <center>
 <h1>Edit Grapevine Profile</h1><br/>
 
-<input type="text" name="name" placeholder="Name" /><br/><br/>
+<input type="text" name="name" placeholder="Testing Name Placeholder" /><br/><br/>
 
 <input type="text" name="email" placeholder="Email Address" /><br/><br>
 
