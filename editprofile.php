@@ -7,7 +7,7 @@ function editprofile(){
 
 <input type="text" name="name" placeholder="Name" /><br/><br/>
 
-<input type="text" name="email" placeholder="Testing email address" /><br/><br>
+<input type="text" name="email" placeholder="Email Address" /><br/><br>
 
 <input type="text" name="phone" placeholder="Phone Number" /><br/><br>
 
