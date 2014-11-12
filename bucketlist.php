@@ -13,7 +13,11 @@ function testBucketlist(){
 	$current_user = wp_get_current_user();
 	$username = $current_user->user_login;
 	
+<<<<<<< Updated upstream
 	echo "<h1>Welcome, $username";
+=======
+	echo "<h1>Welcome, $username</h1>";
+>>>>>>> Stashed changes
 
 ?>
 
@@ -24,6 +28,7 @@ $(document).ready(function(){
 		$("#blButton").click(function(){
 			$("#blModal").modal('show');
 		});
+<<<<<<< Updated upstream
 		
 		
 		$( "#createBL" ).click(function() {			
@@ -46,12 +51,9 @@ $(document).ready(function(){
 			return false;
 		});
 		//$( "#createBL" ).click(function() {
+=======
+>>>>>>> Stashed changes
 			
-			//get the values in input fields
-			//var name = $('#BLname').val();
-			//var desc = $('textarea#BLdesc').val();
-  			//alert( "USER ID:<br/>BL Name: "+name+"<br/>Descrption: <br/>." + desc );
-		//});
 });
 
 </script>
@@ -62,7 +64,7 @@ $(document).ready(function(){
     <center><a href="#" id="blButton" class="btn btn-lg btn-success">Create Bucketlist!</a></center>
     
     <!-- Modal HTML -->
-    <div id="blModal" class="modal fade">
+    <div id="blModal" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -86,8 +88,13 @@ $(document).ready(function(){
 		 
                 </div>
                 <div class="modal-footer">
+<<<<<<< Updated upstream
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <input type="submit" id="test" name="test" value="test"/>
+=======
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="BLCancel" name="BLCancel" style="color: black; font-size: 16px;">Cancel</button>
+                    <input type="submit" class="btn btn-default" id="CreateBucketList" name="CreateBucketList" value="Create" style="color: black; font-size: 16px;"/>
+>>>>>>> Stashed changes
                 </div>
                 </form>
             </div>
@@ -95,9 +102,12 @@ $(document).ready(function(){
     </div>
 </div>
 <br/><br/><br/>
+<<<<<<< Updated upstream
   <form method="post">
   <input type="submit" id="hey" name="hey" value="hey" onsubmit="insert()"/>
   </form>
+=======
+>>>>>>> Stashed changes
   
 <?php
 
@@ -105,11 +115,20 @@ if(isset($_POST['test'])){
 	$BLname = $_POST['BLname'];
 	$BLdesc = $_POST['BLdesc'];
 	insertBL($BLname, $BLdesc);
+<<<<<<< Updated upstream
+}
+=======
+>>>>>>> Stashed changes
 }
 }
 
 function insertBL($BLname, $BLdesc){
 
+<<<<<<< Updated upstream
+function insertBL($BLname, $BLdesc){
+
+=======
+>>>>>>> Stashed changes
   	global $currUser;	
 	global $wpdb;
 	
@@ -120,6 +139,9 @@ function insertBL($BLname, $BLdesc){
 						'BucketListName' => $BLname,
 						'Description' => $BLdesc),
 				array( '%d', '%s', '%s' ) );	
+<<<<<<< Updated upstream
 				
 	echo "BLname is $BLname and BLdesc is $BLdesc";
+=======
+>>>>>>> Stashed changes
 }
