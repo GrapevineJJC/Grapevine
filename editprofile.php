@@ -5,7 +5,7 @@ function editprofile(){
 <center>
 <h1>Edit Grapevine Profile</h1><br/>
 
-<input type="text" name="name" placeholder="Testing Name Placeholder" /><br/><br/>
+<input type="text" name="name" placeholder="Name" /><br/><br/>
 
 <input type="text" name="email" placeholder="Email Address" /><br/><br>
 
@@ -13,7 +13,7 @@ function editprofile(){
 
 <textarea rows="10" cols="50" placeholder="Enter Your Bio"></textarea><br/><br/>
 
-<form action="upload.php" method="post" enctype="multipart/form-data">
+<form action="wp-content/plugins/grapevine/upload.php" method="post" enctype="multipart/form-data">
     Select image to upload:<br/>
     <input type="file" name="fileToUpload" id="fileToUpload"><br/>
     <input type="submit" value="Upload Image" name="submit">

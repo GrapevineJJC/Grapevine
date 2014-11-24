@@ -13,11 +13,7 @@ function testBucketlist(){
 	$current_user = wp_get_current_user();
 	$username = $current_user->user_login;
 	
-<<<<<<< Updated upstream
-	echo "<h1>Welcome, $username";
-=======
 	echo "<h1>Welcome, $username</h1>";
->>>>>>> Stashed changes
 
 ?>
 
@@ -28,31 +24,6 @@ $(document).ready(function(){
 		$("#blButton").click(function(){
 			$("#blModal").modal('show');
 		});
-<<<<<<< Updated upstream
-		
-		
-		$( "#createBL" ).click(function() {			
-			//get the values in input fields
-			var name = $('#BLname').val();
-			var desc = $('textarea#BLdesc').val();
-  			alert( "USER ID:<br/>BL Name: "+name+"<br/>Descrption: <br/>." + desc );
-  			
-  			$.ajax({
-  				url: 'wp-content/plugins/grapevine/test.php',
-  				data: name,
-  				success: function() {
-    			alert('Bucketlist created');
-  				},
-  				error: function(){
-  				alert('fail');
-  				}
-			});
-			
-			return false;
-		});
-		//$( "#createBL" ).click(function() {
-=======
->>>>>>> Stashed changes
 			
 });
 
@@ -88,13 +59,8 @@ $(document).ready(function(){
 		 
                 </div>
                 <div class="modal-footer">
-<<<<<<< Updated upstream
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <input type="submit" id="test" name="test" value="test"/>
-=======
                     <button type="button" class="btn btn-default" data-dismiss="modal" id="BLCancel" name="BLCancel" style="color: black; font-size: 16px;">Cancel</button>
                     <input type="submit" class="btn btn-default" id="CreateBucketList" name="CreateBucketList" value="Create" style="color: black; font-size: 16px;"/>
->>>>>>> Stashed changes
                 </div>
                 </form>
             </div>
@@ -102,33 +68,18 @@ $(document).ready(function(){
     </div>
 </div>
 <br/><br/><br/>
-<<<<<<< Updated upstream
-  <form method="post">
-  <input type="submit" id="hey" name="hey" value="hey" onsubmit="insert()"/>
-  </form>
-=======
->>>>>>> Stashed changes
   
 <?php
 
-if(isset($_POST['test'])){
+if(isset($_POST['CreateBucketList'])){
 	$BLname = $_POST['BLname'];
 	$BLdesc = $_POST['BLdesc'];
 	insertBL($BLname, $BLdesc);
-<<<<<<< Updated upstream
-}
-=======
->>>>>>> Stashed changes
 }
 }
 
 function insertBL($BLname, $BLdesc){
 
-<<<<<<< Updated upstream
-function insertBL($BLname, $BLdesc){
-
-=======
->>>>>>> Stashed changes
   	global $currUser;	
 	global $wpdb;
 	
@@ -139,9 +90,4 @@ function insertBL($BLname, $BLdesc){
 						'BucketListName' => $BLname,
 						'Description' => $BLdesc),
 				array( '%d', '%s', '%s' ) );	
-<<<<<<< Updated upstream
-				
-	echo "BLname is $BLname and BLdesc is $BLdesc";
-=======
->>>>>>> Stashed changes
 }
