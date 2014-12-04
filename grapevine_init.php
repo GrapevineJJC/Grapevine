@@ -109,4 +109,39 @@ add_shortcode('events', 'testEvents');
 include 'editprofile.php';
 add_shortcode('editprofile', 'editprofile');
 
+include 'feed.php';
+add_shortcode('feed', 'feed');
+
 /** REDIRECT USER AFTER SUCCESSFUL LOGIN **/
+function my_login_redirect( $redirect_to, $request, $user ) {
+
+	//echo 'IN MY_LOGIN_REDIRECT\n';
+	
+	//is there a user to check?
+	$current_user = wp_get_current_user();
+	$username = $current_user->user_login;
+	
+	echo 'user is '.$username;
+	global $wpdb;
+	
+	return home_url("/?page_id=66");
+// 				
+// 	//if ( isset( $user->returning_user ) && is_array( $user->returning_user) ) {
+// 		echo '$user->returning_user is'.$user->returning_user;
+// 		if ($user->returning_user == 0 ) {
+// 			echo '$user->returning_user is'.$user->returning_user.' in the if statement!';
+// 			// redirect them to the default place
+// 			$wpdb->update( 'wp_grape_users',
+// 				array(	'returning_user' => 1),
+// 				array(	'ID' => $user->ID),			// WHERE clause
+// 				array( '%d' ),						// data format
+// 				array( '%d' )	);						// WHERE format
+// 				
+// 			//return home_url("/?page_id=44");	//First time logging in, make bucketlist.
+// 		} else {
+// 				//echo '$user->returning_user is'.$username;
+// 			//return home_url("/?page_id=2"); // Else, returning user, bring to events page
+// 		}
+	//}
+}
+add_filter( 'login_redirect', 'my_login_redirect', 10, 3 );

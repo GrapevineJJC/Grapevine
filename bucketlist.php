@@ -13,7 +13,7 @@ function testBucketlist(){
 	$current_user = wp_get_current_user();
 	$username = $current_user->user_login;
 	
-	echo "<h1>Welcome, $username";
+	echo "<h1>Welcome, $username</h1>";
 
 ?>
 
@@ -24,34 +24,7 @@ $(document).ready(function(){
 		$("#blButton").click(function(){
 			$("#blModal").modal('show');
 		});
-		
-		
-		$( "#createBL" ).click(function() {			
-			//get the values in input fields
-			var name = $('#BLname').val();
-			var desc = $('textarea#BLdesc').val();
-  			alert( "USER ID:<br/>BL Name: "+name+"<br/>Descrption: <br/>." + desc );
-  			
-  			$.ajax({
-  				url: 'wp-content/plugins/grapevine/test.php',
-  				data: name,
-  				success: function() {
-    			alert('Bucketlist created');
-  				},
-  				error: function(){
-  				alert('fail');
-  				}
-			});
 			
-			return false;
-		});
-		//$( "#createBL" ).click(function() {
-			
-			//get the values in input fields
-			//var name = $('#BLname').val();
-			//var desc = $('textarea#BLdesc').val();
-  			//alert( "USER ID:<br/>BL Name: "+name+"<br/>Descrption: <br/>." + desc );
-		//});
 });
 
 </script>
@@ -62,7 +35,7 @@ $(document).ready(function(){
     <center><a href="#" id="blButton" class="btn btn-lg btn-success">Create Bucketlist!</a></center>
     
     <!-- Modal HTML -->
-    <div id="blModal" class="modal fade">
+    <div id="blModal" class="modal fade" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -86,8 +59,8 @@ $(document).ready(function(){
 		 
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <input type="submit" id="test" name="test" value="test"/>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="BLCancel" name="BLCancel" style="color: black; font-size: 16px;">Cancel</button>
+                    <input type="submit" class="btn btn-default" id="CreateBucketList" name="CreateBucketList" value="Create" style="color: black; font-size: 16px;"/>
                 </div>
                 </form>
             </div>
@@ -95,13 +68,10 @@ $(document).ready(function(){
     </div>
 </div>
 <br/><br/><br/>
-  <form method="post">
-  <input type="submit" id="hey" name="hey" value="hey" onsubmit="insert()"/>
-  </form>
   
 <?php
 
-if(isset($_POST['test'])){
+if(isset($_POST['CreateBucketList'])){
 	$BLname = $_POST['BLname'];
 	$BLdesc = $_POST['BLdesc'];
 	insertBL($BLname, $BLdesc);
@@ -120,6 +90,4 @@ function insertBL($BLname, $BLdesc){
 						'BucketListName' => $BLname,
 						'Description' => $BLdesc),
 				array( '%d', '%s', '%s' ) );	
-				
-	echo "BLname is $BLname and BLdesc is $BLdesc";
 }
