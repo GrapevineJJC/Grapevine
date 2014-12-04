@@ -45,4 +45,6 @@ if ($uploadOk == 0) {
         echo "Sorry, there was an error uploading your file.";
     }
 }
+
+header( 'Location: http://cscilab.bc.edu/~baconju/foo/?page_id=66');
 ?>
