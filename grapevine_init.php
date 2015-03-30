@@ -73,9 +73,20 @@ $debug = 0;
  
  /**
   *
-  * DO WE WANT TO ADD STYLESHEET HERE EVENTUALLY ??
+  * Safely load stylesheets
   *
   **/
+function safely_add_stylesheet() {
+	//wp_enqueue_style( 'prefix-style', plugins_url('css/grapevine.css', __FILE__) );
+	wp_enqueue_style( 'prefix-style', plugins_url('plugins/dragDropPlug.css', __FILE__) );
+}
+add_action( 'wp_enqueue_scripts', 'safely_add_stylesheet' );
+ 
+add_action('init', 'google_font_style'); 
+  function google_font_style(){ 
+    wp_register_style( 'GoogleFonts', 'http://fonts.googleapis.com/css?family=Lato:300'); 
+    wp_enqueue_style( 'GoogleFonts' ); 
+ }
  
 /* supposedly the correct way to load jquery */
 add_action( 'wp_enqueue_scripts', 'load_jquery' );
@@ -83,6 +94,7 @@ function load_jquery() {
 	wp_enqueue_style( 'jquery-style', "http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" );
 	wp_enqueue_script( 'jquery' );
 	wp_enqueue_script( 'jquery-ui-core' );	
+	wp_enqueue_script( 'plugins/dragDropPlugin.js' );	
 }
 
  /* suppposedly the correct way to load bootstrap */
@@ -90,6 +102,12 @@ function load_jquery() {
  function load_bootstrap() {
  	wp_enqueue_script( 'bootstrap', 'http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js', array('jquery'), 3.3, true);
  }
+ 
+ //LOAD PLUGIN
+ function load_grapevine(){
+    wp_enqueue_script( 'grapevine_script', plugins_url( 'plugins/dragDropPlugin.js' , __FILE__ ), array(), null, true);
+}
+add_action( 'wp_enqueue_scripts', 'load_grapevine' );
 
 /** WE CAN EVENTUALLY LOAD OUR JAVASCRIPT VALIDATION FORMS HERE **/
 
@@ -111,6 +129,16 @@ add_shortcode('editprofile', 'editprofile');
 
 include 'feed.php';
 add_shortcode('feed', 'feed');
+
+include 'addToBucketlist.php';
+add_shortcode('addToBucketlist', 'addToBucketlist');
+
+/* 3/12/15 - Catherine :  I commented out the next two lines because they gave us the header
+ * errors that weren't allowing us to login.  Julie I think you had been working on addToBucketList.php?
+ * 
+ */
+//include 'addToBucketlist.php';
+//add_shortcode('addToBucketlist', 'addToBucketlist');
 
 /** REDIRECT USER AFTER SUCCESSFUL LOGIN **/
 function my_login_redirect( $redirect_to, $request, $user ) {

@@ -2,14 +2,25 @@
 <html lang="en">
 <head>
 <title>Grapevine!</title>
+
+<!-- ///  bootstrap.css  /// -->
+<link rel="stylesheet" type="text/css" href="bootstrap-3.1.1/css/bootstrap.css">
+<script src="bootstrap-3.1.1/js/bootstrap.min.js"></script>
+
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+      <meta name="description" content="">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <script type="text/javascript">
 $('.carousel').carousel()
 </script>
+</head>
+
+<body>
+    
 <?php
 
 function launchHomePage(){
@@ -22,7 +33,7 @@ function launchHomePage(){
 	
 		?>
 		</div>
-		<div class=well>
+		<div class="well" style="">
 		<center><h1><b>Create, Discover, Check It Off!</b></h1><br/><br/><br/></center>
     	<div class="container">
         <div class="row">
@@ -40,7 +51,7 @@ function launchHomePage(){
     	
     	<br/><br/><br/>
     	<center>
-    	<div class="container">
+    	<div class="container-fluid">
         <div class="row">
 			<div class="col-md-5"><p><a href="http://cscilab.bc.edu/~baconju/foo/?login"><img src="wp-content/plugins/grapevine/img/Login_Button.png" alt="Login" height="100" width="200"></a></p></div>
             <!--<div class="col-md-5"><p><a href="http://cscilab.bc.edu/~baconju/foo/?login"><button type="button" class="btn btn-success btn-lg">Login</button></a></p></div>-->
