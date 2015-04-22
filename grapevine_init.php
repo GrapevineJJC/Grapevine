@@ -1,11 +1,11 @@
 <?php 
-
 /* Plugin Name: Grapevine
 Description: This plugin stores data for Users, Events, and Bucket Lists.
 Author: Catherine, Julie, Julia
 Version: 0.1
 Author URI: nope
 */
+
 
 global $grapevine_db_version;
 $grapevine_db_version = "1.0";
@@ -44,7 +44,7 @@ $debug = 0;
  		dbDelta ($sql);
  		
  		add_option ( "grapevine_db_version", $grapevine_db_version );
- 		
+ 		add_filter( 'login_redirect', 'my_login_redirect', 10, 3 );
   }
   register_activation_hook ( __FILE__, 'grapevine_install' );
   
@@ -77,16 +77,15 @@ $debug = 0;
   *
   **/
 function safely_add_stylesheet() {
-	//wp_enqueue_style( 'prefix-style', plugins_url('css/grapevine.css', __FILE__) );
-	wp_enqueue_style( 'prefix-style', plugins_url('plugins/dragDropPlug.css', __FILE__) );
+	wp_enqueue_style( 'prefix-style', plugins_url('css/grapevine.css', __FILE__) );
 }
 add_action( 'wp_enqueue_scripts', 'safely_add_stylesheet' );
  
 add_action('init', 'google_font_style'); 
-  function google_font_style(){ 
+function google_font_style(){ 
     wp_register_style( 'GoogleFonts', 'http://fonts.googleapis.com/css?family=Lato:300'); 
     wp_enqueue_style( 'GoogleFonts' ); 
- }
+}
  
 /* supposedly the correct way to load jquery */
 add_action( 'wp_enqueue_scripts', 'load_jquery' );
@@ -95,6 +94,9 @@ function load_jquery() {
 	wp_enqueue_script( 'jquery' );
 	wp_enqueue_script( 'jquery-ui-core' );	
 	wp_enqueue_script( 'plugins/dragDropPlugin.js' );	
+	wp_enqueue_script( 'plugins/accordionPlugin.js' );	
+	wp_enqueue_script( 'bootstrap', "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js" );
+
 }
 
  /* suppposedly the correct way to load bootstrap */
@@ -103,9 +105,15 @@ function load_jquery() {
  	wp_enqueue_script( 'bootstrap', 'http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js', array('jquery'), 3.3, true);
  }
  
+ /* loading javascript for maps */
+add_action( 'wp_enqueue_scripts', 'load_javascript' );
+function load_javascript() {
+ 	wp_enqueue_script( 'javascript', '/maps.js' );
+}
+ 
  //LOAD PLUGIN
  function load_grapevine(){
-    wp_enqueue_script( 'grapevine_script', plugins_url( 'plugins/dragDropPlugin.js' , __FILE__ ), array(), null, true);
+    //wp_enqueue_script( 'grapevine_script', plugins_url( 'plugins/dragDropPlugin.js' , __FILE__ ), array(), null, true);
 }
 add_action( 'wp_enqueue_scripts', 'load_grapevine' );
 
@@ -117,6 +125,8 @@ add_action( 'register_form', 'grape_register_form' );
 include 'home.php';
 add_shortcode('home', 'launchHomePage');
 
+include 'feed.php';
+add_shortcode('feed', 'feed');
 
 include 'bucketlist.php';
 add_shortcode('bucketlist', 'testBucketlist');
@@ -127,11 +137,10 @@ add_shortcode('events', 'testEvents');
 include 'editprofile.php';
 add_shortcode('editprofile', 'editprofile');
 
-include 'feed.php';
-add_shortcode('feed', 'feed');
-
 include 'addToBucketlist.php';
 add_shortcode('addToBucketlist', 'addToBucketlist');
+
+
 
 /* 3/12/15 - Catherine :  I commented out the next two lines because they gave us the header
  * errors that weren't allowing us to login.  Julie I think you had been working on addToBucketList.php?
@@ -149,7 +158,7 @@ function my_login_redirect( $redirect_to, $request, $user ) {
 	$current_user = wp_get_current_user();
 	$username = $current_user->user_login;
 	
-	echo 'user is '.$username;
+	//echo 'user is '.$username;
 	global $wpdb;
 	
 	return home_url("/?page_id=66");
@@ -172,4 +181,3 @@ function my_login_redirect( $redirect_to, $request, $user ) {
 // 		}
 	//}
 }
-add_filter( 'login_redirect', 'my_login_redirect', 10, 3 );

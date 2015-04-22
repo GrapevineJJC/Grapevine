@@ -1,10 +1,7 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>Grapevine!</title>
-<link rel="stylesheet" type="text/css" href="wp-content/plugins/grapevine/css/grapevine.css"/>
-</head>
+<?php
+function feed() {
 
+?>
 <script>
 #event {
     height: 500px;
@@ -12,19 +9,35 @@
     border: 1px solid lightgrey;
 }
 </script>
-
 <?php
-
-function feed() {
-
 	$current_user = wp_get_current_user();
 	$username = $current_user->user_login;
 	
 	echo "<h1>Welcome, $username</h1>";
 		
 	global $wpdb;
+	
+	//GET USERS BUCKETLIST IDs AND NAMES
+	$query = 'SELECT * FROM wp_grape_bucketlists WHERE CreatedByUser  =  '.$current_user->ID;
+	$result = $wpdb->get_results($query);
+
+	$blnames = array();
+	$blids = array();
+	
+	foreach ($result as $row) {
+		$BLname = $row->BucketListName;
+		array_push($blnames, $BLname);
+		
+		$BLID = $row->BucketListID;
+		array_push($blids, $BLID);
+		}
+		
+	var_dump($blnames);
+	var_dump($blids);
+	
+	
 	if ($current_user->returning_user == 0 ) {
-		echo '$user->returning_user is'.$current_user->returning_user.' in the if statement!';
+		//echo '$user->returning_user is'.$current_user->returning_user.' in the if statement!';
 		// redirect them to the default place
 		$wpdb->update( 'wp_grape_users',
 			array(	'returning_user' => 1),
@@ -34,7 +47,15 @@ function feed() {
 			launchModal();							// TODO
 		//return home_url("/?page_id=44");	//First time logging in, make bucketlist.
 	} else {
+	
 		showFeed();
+		
+		
+			
+	//If user clicks an add button
+	if(isset($_POST['AddToBL'])){
+		echo "Event ID: $id was clicked \n";
+	}
 		//echo '$user->returning_user is'.$username;
 		//return home_url("/?page_id=2"); // Else, returning user, bring to events page
 	}
@@ -216,10 +237,34 @@ $(document).ready(function(){
 
 	<?php
 
-
 	// Show the feed now
 	showFeed();
-	
+	?>
+
+   
+   <button type="button" class="btn btn-warning popover-toggle" id="example1" data-container="body" data-toggle="popover" data-placement="right" rel="popover" title="A Title 1">popover 1</button>
+    <!-- your popup hidden content -->
+    <div id="popover_content_wrapper" style="display: none">
+    <form method="post">
+  		<input type="checkbox" name="vehicle" value="Bike"> BL1<br>
+  		<input type="checkbox" name="vehicle" value="Car"> BL2<br>
+  		<input type="submit" value="Submit">
+	</form>   
+    </div>
+    
+    
+   <script>
+	$(function (){
+   	 	$('[rel=popover]').popover({ 
+       		html : true, 
+        	content: function() {
+          	return $('#popover_content_wrapper').html();
+        }
+    	});
+    });
+   </script>
+
+	<?php
 	
 	if(isset($_POST['updateProfile'])) {
 		echo "I clicked update profile Button";
@@ -249,6 +294,16 @@ $(document).ready(function(){
 }
 
 
+function addItem(){
+	echo "IN ADD ITEM!";
+	
+	$idButton = isset($_POST['iddetector'])?$_POST['iddetector']:NULL;
+    echo "The id of the button clicked is ".$idButton;
+}
+
+
+?>
+<?php
 function updateProfile($userName, $userEmail, $userPhone, $userBio, $userPhoto){
 
   	global $currUser;	
@@ -317,7 +372,11 @@ function updateProfile($userName, $userEmail, $userPhone, $userBio, $userPhoto){
 function showFeed() {
 	
 	global $wpdb;
-
+	$current_user = wp_get_current_user();
+	$userid = $current_user->user_login;
+	recommendEvents(1);
+	
+/*
 	echo "<center>Welcome to your Feed! <br/></center><br/>";
 	//echo "<center>Check out all these cool events</center>";
 	
@@ -334,11 +393,99 @@ function showFeed() {
 		
 		echo "<button type=\"button\" class=\"btn btn-default\" id=\"AddToBL\" name=\"AddToBL\" style=\"color:black; font-size: 14px;\">Add to my bucket list!</button>";
 		echo "</div><br/><br/>";
+*/
+	}
+	
+/**
+ * RECOMMENDER
+ *
+ */	
+function recommendEvents($userid) {
+	global $wpdb;
+	//table of tagIDs associated with user
+	$result = $wpdb->get_results('SELECT tagID FROM wp_grape_user_tags WHERE userID='.$userid);
+	
+	//array of eventIDs
+	$eventIDs = array();
+	//get all eventIDs associated with all tagIDs
+	foreach($result as $row) {
+		$eventResult = $wpdb->get_results('SELECT event_id FROM wp_grape_event_tags WHERE tag_id='.$row->tagID);
+		foreach($eventResult as $eventRow) {
+			array_push($eventIDs, $eventRow->event_id);
+		}
+	}
+			echo "<b>Here are some events we think you'll enjoy!</b>";
+			
+				//GET USERS BUCKETLIST IDs AND NAMES
+	$query = 'SELECT * FROM wp_grape_bucketlists WHERE CreatedByUser  =  '.$userid;
+	//echo $query;
+	$result = $wpdb->get_results($query);
 
+	$blnames = array();
+	//$blids = array();
+	
+	foreach ($result as $row) {
+		$BLname = $row->BucketListName;
+		$BLID = $row->BucketListID;
+
+		$blnames[$BLname] = $BLID;
+	}
+	echo "<br>";
+	foreach ($blnames as $key => $value) {
+    echo "Key: $key; Value: $value<br />\n";
+}
+	//go thru all the eventIDs we've accumulated (all are primary)
+	// go thru all events with those ID's and recommend them
+	foreach($eventIDs as $id) {
+	/*
+		//Check if ID is primary or secondary
+		if ($id>9) {		//secondary ID
+			//get primary key associated with the secondary key
+			$primaryIDs = $wpdb->get_results("SELECT parentID FROM wp_grape_tags_secondary WHERE tagID=".$id);
+			foreach($primaryIDs as $key) { //only one
+				//search for this ID in $eventIDs and take it out
+				if (in_array($key, $eventIDs)
+					unset($
+			}
+		}
+	*/
+	
+	
+		$events = $wpdb->get_results('SELECT * FROM wp_grape_events WHERE EventID='.$id);
+		foreach($events as $event) {
+		//print info for event
+			echo "<form method=\"post\">";
+			echo "<div class=\"well\"><h2> ".$event->EventName."</h2>";
+		
+			if ($row->LocationAddress != null) 
+				echo "<label>Location: </label> ".$event->LocationAddress."<br/>";
+			
+			echo "<label>Category: </label> ".$event->Category."<br/>";
+			echo "<label>Description: </label> ".$event->Description."<br/><br/>";
+		
+			//echo "<button type=\"button\" class=\"btn btn-default\" id=\"$id\" name=\"AddToBL\" onclick=\"addItem($id);\" style=\"color:black; font-size: 14px;\">Add to my bucket list!</button>";
+	?>
+	<button type="button" class="btn btn-warning popover-toggle" id="example1" data-container="body" data-toggle="popover" data-placement="right" rel="popover" title="My Bucketlists">Add to Bucketlist!</button>
+    <!-- your popup hidden content -->
+    <div id="popover_content_wrapper" style="display: none">
+    <form method="post">
+  		<?php
+  			foreach ($blnames as $key => $value) {
+    			echo "<input type=\"checkbox\" name=\"blnames\" value=\"$value\"> $key <br>";
+    		}
+    	?>
+  		<input type="submit" name="submit" value="Submit">
+	</form>   
+    </div>
+	</div></form><br/><br/>
+	
+	<?php	
+			if(isset($_POST['submit'])){
+				echo "I CLICKED THE SUBMIT BUTTON!";
+			}
+		}
 	}
 }
-
-
 
 
 // 
@@ -381,9 +528,4 @@ function showFeed() {
 // // upload photo to fetch if we tried to upload
 // if(isset($_POST['submit'])) {
 // 	getImageData();
-// }
-
-
-
-
-
+//

@@ -1,4 +1,4 @@
-<style>
+	<style type="text/css">
 	body{
 		font-family: Trebuchet MS, Lucida Sans Unicode, Arial, sans-serif;	/* Font to use */
 		background-color:#E2EBED;
@@ -20,7 +20,7 @@
 	#dhtmlgoodies_dragDropContainer{	/* Main container for this script */
 		width:790px;
 		height:720px;
-		/*border:1px solid #f9bdf7;*/
+		border:1px solid #f9bdf7;
 		background-color:#FFF;
 		-moz-user-select:none;
 	}
@@ -89,14 +89,9 @@
 
 	div#dhtmlgoodies_mainContainer{	/* Right column DIV */
 		width:590px;
-		height: 500px;
-		/*border:1px solid #999;*/
 		float:left;
 	}
 	#dhtmlgoodies_mainContainer div{	/* Parent <div> of small boxes */
-		background-image: url("wp-content/plugins/grapevine/img/bucketicon.png");
-		background-repeat: no-repeat;
-		background-position: center; 
 		float:left;
 		margin-right:10px;
 		margin-bottom:10px;
@@ -104,17 +99,13 @@
 		border:1px solid #999;
 
 		/* CSS HACK */
-		width: 590px;	/* IE 5.x */
-		width/* */:/**/590px;	/* Other browsers */
-		width: /**/590px;
-		height: 550px;
+		width: 172px;	/* IE 5.x */
+		width/* */:/**/170px;	/* Other browsers */
+		width: /**/170px;
 
 	}
 	#dhtmlgoodies_mainContainer div ul{
 		margin-left:10px;
-		/*border:1px solid #999;*/
-		padding-top: 232px;
-		height: 550px;
 	}
 
 	#dhtmlgoodies_mainContainer div p{	/* Heading above small boxes */
@@ -133,6 +124,7 @@
 		border:0px;
 		margin-bottom:0px;
 		overflow:hidden;
+
 	}
 
 	#dragContent{	/* Drag container */
@@ -154,6 +146,8 @@
 		margin:0px;
 		padding:0px;
 	}
+	</style>
+	<style type="text/css" media="print">
 	div#dhtmlgoodies_listOfItems{
 		display:none;
 	}
@@ -164,7 +158,7 @@
 		display:none;
 	}
 	#dhtmlgoodies_dragDropContainer{
-		border:1px solid #999;
+		border:0px;
 		width:100%;
 	}
-</style>
+	</style>

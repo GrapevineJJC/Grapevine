@@ -1,12 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>Grapevine!</title>
-<link rel="stylesheet" type="text/css" href="wp-content/plugins/grapevine/css/grapevine.css"/>
-</head>
-
 <?php
-
 function testEvents(){
 	$current_user = wp_get_current_user();
 	$username = $current_user->user_login;
@@ -56,14 +48,15 @@ $(document).ready(function(){
                     
                     <label>Category:</label><br/>
                     <select id="eventcategory" name="eventcategory">
-                    	<option value="food">food</option>
-                    	<option value="nightlife">sports</option>
-                    	<option value="academic">Academic</option>
+                    	<option value="restaurants">Restaurants</option>
                     	<option value="sports">Sports</option>
-                    	<option value="music">Music</option>
-                    	<option value="outdoors">Outdoors</option>
                     	<option value="fitness">Fitness</option>
-                    	<option value="recreation">Recreation</option>
+                    	<option value="bars">Bars</option>
+                    	<option value="music">Music</option>
+                    	<option value="theatre">Theatre</option>
+                    	<option value="museums">Museums</option>
+                    	<option value="gaming">Gaming</option>
+                    	<option value="outdoors">Outdoors</option>
                     </select><br/><br/>
            
             </div>

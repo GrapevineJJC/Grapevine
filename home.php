@@ -1,29 +1,9 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>Grapevine!</title>
-
-<!-- ///  bootstrap.css  /// -->
-<link rel="stylesheet" type="text/css" href="bootstrap-3.1.1/css/bootstrap.css">
-<script src="bootstrap-3.1.1/js/bootstrap.min.js"></script>
-
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-      <meta name="description" content="">
-      <meta name="viewport" content="width=device-width, initial-scale=1">
-
-<script type="text/javascript">
-$('.carousel').carousel()
-</script>
-</head>
-
-<body>
-    
 <?php
-
 function launchHomePage(){
+
+echo "<script type='text/javascript'>";
+echo "$('.carousel').carousel()";
+echo "</script>";
 
 	//If a user is not logged in, they should not be able to see the regular content.
 	//Provide error message, 
@@ -62,7 +42,7 @@ function launchHomePage(){
     </div>
     </div>	
 		
-		<?php
+<?php
 		return;
 	}
 		//Otherwise, user is logged in. Display regular content
@@ -115,3 +95,4 @@ function launchHomePage(){
 
 <?php
 }
+?>

@@ -1,12 +1,29 @@
 <?php
 function addToBucketlist(){
+
+include('plugins/dragDropPlugin.js');
 ?>
+
+<?php
+echo "<style>";
+include 'plugins/dragDropPlug.css';
+echo "</style>";
+
+if(isset($_POST['saveButton'])){
+	saveList();
+}
+?>
+
 <center>
+
+<form name="myForm" method="post" action="" onsubmit="saveDragDropNodes()"> 
+
 <div id="dhtmlgoodies_dragDropContainer">
 	<div id="topBar">
 		<!-- <img src="wp-content/plugins/grapevine/img/bucket.png"> -->
 		<h1>What Interests You?</h1>
 	</div>
+	
 	<div id="dhtmlgoodies_listOfItems">
 		<div>
 			<p>Interests</p>
@@ -33,13 +50,27 @@ function addToBucketlist(){
 	</div>
 </div>
 <div id="footer">
-	<form action="aPage.html" method="post"><input type="button" onclick="saveDragDropNodes()" value="Save"></form>
+	<!--<form action="aPage.html" method="post"><input type="button" onclick="saveDragDropNodes()" value="Save"></form>-->
+		
+		<input type="hidden" name="listOfItems" value="">
+		<input type="submit" value="Save" name="saveButton">
+	</form>
+
+
 </div>
 <ul id="dragContent"></ul>
 <div id="dragDropIndicator"><img src="wp-content/plugins/grapevine/img/insert.gif"></div>
 <div id="saveContent"><!-- THIS ID IS ONLY NEEDED FOR THE DEMO --></div>
+
+
+</form>
 </center>
  
 <?php
+}
+
+function saveList(){
+	$var = $_POST['listOfItems'];
+	echo "$var";
 }
 ?>

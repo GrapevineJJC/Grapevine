@@ -1,15 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<title>Create A Bucketlist</title>
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-</head>
-
 <?php
-
 function testBucketlist(){
 
 	global $wpdb;
@@ -17,9 +6,6 @@ function testBucketlist(){
 	$current_user = wp_get_current_user();
 	$username = $current_user->user_login;
 	$currID = $current_user->ID;
-?>
-
-<?php
 
 	echo "<div class=\"pageHeader\">My Bucketlists</div><br/>";
 
@@ -42,9 +28,10 @@ function testBucketlist(){
 		echo "<p class=\"blNumEvents\">x events</p>";
 		echo "</div>";
 		echo "</div>";
-	}
+
+		}
+		echo "</div>";
 ?>
-</div>
 
 <script type="text/javascript">
 $(document).ready(function(){
@@ -58,10 +45,6 @@ $(document).ready(function(){
 </script>
 
 
-<!-- This is the html for the Bucketlist Modal. -->
-<!-- Users click button to launch modal, enter the input fields, and insert into db -->
-<!-- <div class="bucketlistModal"> -->
-    <!-- Button HTML (to Trigger Modal) -->
     <center><a href="#blModal" role="button" class="btn btn-lg btn-primary" data-toggle="modal">+</a></center>
     
     <!-- Modal HTML -->
@@ -100,11 +83,11 @@ $(document).ready(function(){
   
 <?php
 
-if(isset($_POST['CreateBucketList'])){
-	$BLname = $_POST['BLname'];
-	$BLdesc = $_POST['BLdesc'];
-	insertBL($BLname, $BLdesc);
-}
+	if(isset($_POST['CreateBucketList'])){
+		$BLname = $_POST['BLname'];
+		$BLdesc = $_POST['BLdesc'];
+		insertBL($BLname, $BLdesc);
+	}
 }
 
 function insertBL($BLname, $BLdesc){
