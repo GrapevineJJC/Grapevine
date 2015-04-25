@@ -2,7 +2,7 @@
 
 <script>
 
-$(document).ready(function() {
+/*$(document).ready(function() {
 	$(".AddToBL").click(function() {
 		var eventID = $(this).attr('id');
 		//alert(eventID);
@@ -19,6 +19,6 @@ $(document).ready(function() {
 	
 	});
 
-});
+});*/
 
 </script>

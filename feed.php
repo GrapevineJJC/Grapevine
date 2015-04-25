@@ -6,7 +6,7 @@ include('plugins/addingBLs.js');
 
 	$current_user = wp_get_current_user();
 	$username = $current_user->user_login;
-	
+		
 	echo "<h1>Welcome, $username</h1>";
 		
 	global $wpdb;
@@ -17,6 +17,7 @@ include('plugins/addingBLs.js');
 
 	$blnames = array();
 	$blids = array();
+	$numEvents = array();
 	
 	foreach ($result as $row) {
 		$BLname = $row->BucketListName;
@@ -362,8 +363,8 @@ function showFeed() {
 function recommendEvents($userid) {
 			$bl_names= $_POST['blnames'];
 			$event_id = $_POST['eventid'];
-			var_dump($blnames);
-			var_dump($event_id);
+			//var_dump($blnames);
+			//var_dump($event_id);
 			
 	global $wpdb;
 	
@@ -382,7 +383,7 @@ function recommendEvents($userid) {
 	}
 	echo "<br>";
 	foreach ($blnames as $key => $value) {
-    echo "Key: $key; Value: $value<br />\n";
+    //echo "Key: $key; Value: $value<br />\n";
 	}
 	
 	
@@ -401,7 +402,7 @@ function recommendEvents($userid) {
 	//* 		array_push($eventIDs, $eventRow->event_id);
 	//* 	}
 	//* }
-		echo "<b>Here are some events we think you'll enjoy!</b>";
+		echo "<b>Here are some events we think you'll enjoy!</b>\n\n";
 			
 	//go thru all the eventIDs we've accumulated (all are primary)
 	// go thru all events with those ID's and recommend them
@@ -420,63 +421,103 @@ function recommendEvents($userid) {
 		}
 	*/
 	
-	
 	//* $events = $wpdb->get_results('SELECT * FROM wp_grape_events WHERE EventID='.$id);
 	$events = $wpdb->get_results('
-			SELECT e.EventName, e.LocationAddress, e.Description, e.EventID
+			SELECT e.EventName, e.LocationAddress, e.Description, e.EventID, e.CreatedByUser
 				FROM wp_grape_users AS u
 				JOIN wp_grape_user_tags AS ut ON u.ID = ut.userID
 				JOIN wp_grape_event_tags AS et ON ut.tagID = et.tag_id
 				JOIN wp_grape_events AS e ON e.EventID = et.event_id
 				WHERE u.ID ='.$userid);
 				
-	foreach($events as $event) {
-		$eventID = $event->EventID;
-		echo "event id is $eventID";
+		foreach($events as $event) {
+			$eventID = $event->EventID;
+			echo "event id is $eventID";
 			
-		//print info for event
-?>
-		<form method="post">
-<?php
-		echo "<div class=\"well\">
-					<h2> ".$event->EventName."</h2>";
+			//print info for event
+			echo "<div class=\"well\">
+				<h2> ".$event->EventName."</h2>";
+				
+			echo "<label>Created by User: </label> ".$event->CreatedByUser."<br/>";
+				$jpg = 'wp-content/plugins/grapevine/profilepictures/'.$event->CreatedByUser.'_thumb.jpg';
+				if (file_exists($jpg)){
+					echo "<img src=\"$jpg\" alt=\"Profile Picture\" /><br/>";
+				}
 		
 				if ($event->LocationAddress != null) 
 					echo "<label>Location: </label> ".$event->LocationAddress."<br/>";
 				
 				//* echo "<label>Category: </label> ".$event->Category."<br/>";
 				echo "<label>Description: </label> ".$event->Description."<br/><br/>";
-			
-				//echo "<button type=\"button\" class=\"btn btn-default\" id=\"$id\" name=\"AddToBL\" onclick=\"addItem($id);\" style=\"color:black; font-size: 14px;\">Add to my bucket list!</button>";
-				//echo "<button id=\"$eventID\" name=\"AddToBL\" type=\"button\" class=\"btn btn-warning popover-toggle\" data-container=\"body\" data-toggle=\"popover\" data-placement=\"right\" rel=\"popover\" title=\"My Bucketlists\">Add to Bucketlist!</button>";
 
-				echo "<button type=\"submit\" id=\"$eventID\" class=\"AddToBL\" type=\"button\" title=\"My Bucketlists\" >Add to Bucketlist!</button>";
+				echo "<button id=\"$eventID\" name=\"AddToBL\" type=\"button\" class=\"btn btn-warning popover-toggle\" data-container=\"body\" data-toggle=\"popover\" data-placement=\"right\" rel=\"popover\" title=\"My Bucketlists\">Add to Bucketlist!</button>";
+
+				//echo "<button id=\"$eventID\" class=\"AddToBL\" type=\"button\" title=\"My Bucketlists\" >Add to Bucketlist!</button>";
 				
 				//echo "<input type=\"submit\" name=\"showBLs$eventID\" id=\"$eventID\" value=\"Add to Bucketlist!\">";
 				
 				
 				?>
 				<!-- your popup hidden content -->
-<!-- 
-				<div class="popover_content_wrapper" style="display: none">
+
+				<?php echo "<div class=\"popover_content_wrapper\" id=\"$eventID\">"; ?>
 					<form method="post">
 						<?php
 							echo "<input type='hidden' name='event_id' value='$eventID' />";
-							 
+							
 							foreach ($blnames as $key => $value) {
 								echo "<input type=\"checkbox\" name=\"blnames[]\" value=\"$value\"> $key <br>";
 							}
 						?>
 						<input type="submit" name="submitBLs" value="Submit">
-					</form>   
+					</form>
 				</div>
- -->
 			</div>
-		 </form>
 	
-	<?php useInfo(); ?>
-	<!-- end foreach event loop -->
 	<?php
+	} //end foreach loop
+	
+	
+		if(isset($_POST['submitBLs'])){		
+		echo "I CLICKED THE SUBMIT BUTTON!";
+			
+		$bl_names= $_POST['blnames'];
+		$event_id = $_POST['event_id'];
+			
+		echo "BL NAMES:\n";
+		var_dump($bl_names);
+			
+		echo "<br/> EVENT ID:\n";
+			var_dump($event_id);
+		echo "<br/><br/><br/>";
+		
+		
+		
+		//Iterate through bucketlists checked and insert Event into BL
+			foreach($bl_names as $bl){
+			$wpdb->insert( 'wp_grape_blJoinEvents',
+					array(	'BucketListID' => $bl,
+							'EventID' => $event_id),
+					array( '%d', '%d' ) );
+			
+			
+			$query = 'SELECT NumberOfEvents FROM wp_grape_bucketlists WHERE BucketListID  =  '.$bl;
+			$result = $wpdb->get_results($query);
+	
+			foreach ($result as $row) {
+				$num = $row->NumberOfEvents;
+				echo "Number of events in bl id $bl is $num\n";
+				$newnum = $num + 1;
+				echo "New Number of events in bl id $bl is $newnum\n";
+			}
+			
+			
+			$update_query = "UPDATE wp_grape_bucketlists SET NumberOfEvents = ".$newnum." WHERE BucketListID = ".$bl;
+			echo "$update_query";
+			$wpdb->query($update_query);
+			
+			}
+			//QUERY FOR EVENT'S TAGS, STORE IN USER TAGS TABLE
 	}
 	
 	/*
@@ -497,13 +538,20 @@ function recommendEvents($userid) {
 }
 
 function useInfo(){
-	//if(isset)
-		if(isset($_POST['eventID']))
-			echo "yeah";
-		else
-			echo "no";
+//Check if submit button hit
+	if(isset($_POST['submitBLs'])){		
+			echo "I CLICKED THE SUBMIT BUTTON!";
+			
+			$bl_names= $_POST['blnames'];
+			$event_id = $_POST['event_id'];
+			
+			echo "BL NAMES:\n";
+			//var_dump($bucketlists);
+			
+			echo "<br/> EVENT ID:\n";
+			//var_dump($eventID);
+	}
 }
-
 
 function displayPopover($blnames, $eventID) {
 ?>
@@ -549,45 +597,3 @@ function bucketlistsSelected($eventID, $bucketlists) {
 
 
 }
-
-// 
-// 
-// // Uploading Image stuff
-// function getImageData() {
-// 	$imageName = mysql_real_escape_string($_FILES["fileToUpload"]["name"]);
-// 	$imageData = mysql_real_escape_string(file_get_contents($_FILES["fileToUpload"]["tmp_name"]));
-// 	$imageType = mysql_real_escape_string($_FILES["image"]["type"]);
-// 	
-// 	if(substr($imageType,0,5) == "image") {
-// 		// insert into database
-// 		insertImage($imageData);
-// 		echo "Image Uploaded Sucessfully";
-// 		// show the image back to us
-// 	} else {
-// 		echo "Only images are allowed!";
-// 	}
-// }
-// 
-// function insertImage($imageData) {
-// 	global $currUser;	
-// 	global $wpdb;
-// 	
-// 	$currUser = wp_get_current_user(); 
-// 	
-// 	$wpdb->update( 'wp_grape_events',
-// 				array(	'user_image' => $imageData),
-// 				array(	'ID' => $currUser->ID),			// WHERE clause
-// 				array( '%s' ),							// data format
-// 				array( '%d' )	);						// WHERE format
-// }
-// 
-// 
-// 
-// 
-// 
-// 
-// 
-// // upload photo to fetch if we tried to upload
-// if(isset($_POST['submit'])) {
-// 	getImageData();
-//

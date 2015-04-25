@@ -44,7 +44,7 @@ $debug = 0;
  		dbDelta ($sql);
  		
  		add_option ( "grapevine_db_version", $grapevine_db_version );
- 		add_filter( 'login_redirect', 'my_login_redirect', 10, 3 );
+ 		//add_filter( 'login_redirect', 'my_login_redirect', 10, 3 );
   }
   register_activation_hook ( __FILE__, 'grapevine_install' );
   
@@ -168,6 +168,8 @@ add_shortcode('editpro', 'editpro');
 //add_shortcode('addToBucketlist', 'addToBucketlist');
 
 /** REDIRECT USER AFTER SUCCESSFUL LOGIN **/
+add_filter( 'login_redirect', 'my_login_redirect', 10, 3 );
+
 function my_login_redirect( $redirect_to, $request, $user ) {
 
 	//echo 'IN MY_LOGIN_REDIRECT\n';
