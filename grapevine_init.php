@@ -92,6 +92,8 @@ add_action( 'wp_enqueue_scripts', 'load_jquery' );
 function load_jquery() {
 	wp_enqueue_style( 'jquery-style', "http://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" );
 	wp_enqueue_script( 'jquery' );
+	wp_register_script('jquery', "http" . ($_SERVER['SERVER_PORT'] == 443 ? "s" : "") . "://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js", false, null);
+    wp_enqueue_script('jquery');
 	wp_enqueue_script( 'jquery-ui-core' );	
 	wp_enqueue_script( 'plugins/dragDropPlugin.js' );	
 	wp_enqueue_script( 'plugins/accordionPlugin.js' );	
@@ -99,16 +101,24 @@ function load_jquery() {
 
 }
 
+//Load Bootstrap CSS and JavaScript
+add_action ( 'wp_enqueue_scripts', 'bootstrap_cdn_scripts_styles', 10 );
+
+function bootstrap_cdn_scripts_styles() {
+	wp_enqueue_style( 'bootstrap-css', '//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css', array(), '3.0.3', 'all' );
+	wp_enqueue_script( 'bootstrap-js', '//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js',   array(), '3.0.3', true );
+}
+
  /* suppposedly the correct way to load bootstrap */
  add_action( 'wp_enqueue_scripts', 'load_bootstrap' );
  function load_bootstrap() {
- 	wp_enqueue_script( 'bootstrap', 'http://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js', array('jquery'), 3.3, true);
+ 	wp_enqueue_script( 'bootstrap', 'http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js', array('jquery'), 3.3, true);
  }
  
  /* loading javascript for maps */
 add_action( 'wp_enqueue_scripts', 'load_javascript' );
 function load_javascript() {
- 	wp_enqueue_script( 'javascript', '/maps.js' );
+ 	wp_enqueue_script( 'javascript', '/wp-content/plugins/grapevine/maps.js' );
 }
  
  //LOAD PLUGIN
@@ -140,6 +150,14 @@ add_shortcode('editprofile', 'editprofile');
 include 'addToBucketlist.php';
 add_shortcode('addToBucketlist', 'addToBucketlist');
 
+include 'maps.php';
+add_shortcode('maps', 'maps');
+
+include 'edit_propic.php';
+add_shortcode('propic', 'propic');
+
+include 'editpro.php';
+add_shortcode('editpro', 'editpro');
 
 
 /* 3/12/15 - Catherine :  I commented out the next two lines because they gave us the header

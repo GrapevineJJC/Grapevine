@@ -23,45 +23,26 @@ include('plugins/accordionPlugin.js');
 <center>
 
 <div id="home">
-<!-- <div class="promo" id="home" style="background-image:url(img/promo.jpg);"> -->
 <h1>Edit Your Profile!</h1><br/>
 <form method="post">
 	
+	<center>	
 	<div class="row">
-	  <center>
-	  <div style="float:center; class:col-md-4">
+		<div style="float:center; class:col-md-4">
 			<label>Your Name:</label><br/>
-			<input type="text" id="name" name="name" value ="<?php echo htmlspecialchars($nicename); ?>" placeholder="Name" /><br/>
-	  </div><br/>
-	  </center>
-	  <center>
+			<!--<input type="text" id="name" name="name" value ="<?php if(isset($_POST['name'])) echo $_POST['name']; else echo htmlspecialchars($nicename); ?>" placeholder="Name" /><br/>-->
+	  		<input type="text" id="name" name="name" value ="<?php if(isset($_POST['name'])) echo $_POST['name']; else echo htmlspecialchars($nicename); ?>" placeholder="Name" /><br/>
+	  	
+	  	</div><br/>
+
 	  <div style="float:center; class:col-md-4">
-		<label>Your Email:</label><br/>
-		<input type="text" id="email" name="email" value ="<?php echo htmlspecialchars($email); ?>"placeholder="Email Address" /><br/>
+			<label>Your Email:</label><br/>
+			<input type="text" id="email" name="email" value ="<?php if(isset($_POST['email'])) echo $_POST['email']; else echo htmlspecialchars($email); ?>"placeholder="Email Address" /><br/>
 	  </div><br/>
-	  </center>
-	</div>
-	
-	<center>
-		<table>
-		<tr>
-		<td>
-			<label>Your Profile Picture:<label><br/>
-		</td>
-		<td>
-			<center>
-		<!--	<form class="well" action="wp-content/plugins/grapevine/upload_profile_pictures.php" method="post" enctype="multipart/form-data">
-				Select image to upload:<br/>
-				<input type="file" name="fileToUpload" id="fileToUpload"><br/>
-				<input type="submit" value="Upload Image" name="submit">
-			</form> -->
-			</center><br/><br/>
-		</td>
-		</tr>
-		</table>
-	</center>
-	
-	
+	  
+	</div> <br/><br/>
+
+<!--	
 	<div class="ui-widget">
 	  <label for="tags">Tag Your Interests (e.g. Sports, Food, Nightlife): </label>
 	  <input id="tags">
@@ -71,8 +52,8 @@ include('plugins/accordionPlugin.js');
 	  <label for="restaurantTags">Tag Your Favorite Kinds of Restaurants (e.g. Italian, Mexican, Brunch, Dim Sum): </label>
 	  <input id="restaurantTags">
 	</div>
-	
-	<div><br/><br/><br/><br/></div>
+-->	
+
 	
 
 						<!-- (EDIT THIS AFTER TALKING TO ALVAREZ)
@@ -87,8 +68,8 @@ include('plugins/accordionPlugin.js');
 	
 	
 	<div id="accordion">
-	<!-- PRIMARY TAGS -->
 
+	<!-- PRIMARY TAGS -->
 		<h3 style="color: #2B989E"><b>Check all tags that interest you:</b></h3>
 		<div>	
 		<?php
@@ -100,16 +81,17 @@ include('plugins/accordionPlugin.js');
 				echo "<br/>";
 			}
 		?>
-		</div>	
+		</div>
 		
 	<!-- SECONDARY TAGS -->
-		
+		<?php
+		global $wpdb;
+		$result = $wpdb->get_results('SELECT tagName, tagID, parentID FROM wp_grape_tags_secondary');
+		?>
 		<!--   FOOD TAGS   -->					 
 		<h3 style="color: #38C0C7"><b>Restaurants:</b></h3>
 		<div>	
 		<?php
-			global $wpdb;
-			$result = $wpdb->get_results('SELECT tagName, tagID, parentID FROM wp_grape_tags_secondary');
 			foreach ($result as $row) {
 				if($row->parentID == 1) {
 					echo "<input type=\"checkbox\" name=\"foodtags[]\" value=\"$row->tagID\">";
@@ -124,8 +106,6 @@ include('plugins/accordionPlugin.js');
 		<h3 style="color: #38C0C7"><b>Sports:</b></h3>
 		<div>	
 		<?php
-			global $wpdb;
-			$result = $wpdb->get_results('SELECT tagName, tagID, parentID FROM wp_grape_tags_secondary');
 			foreach ($result as $row) {
 				if($row->parentID == 2) {
 					echo "<input type=\"checkbox\" name=\"sportstags[]\" value=\"$row->tagID\">";
@@ -140,8 +120,6 @@ include('plugins/accordionPlugin.js');
 		<h3 style="color: #38C0C7"><b>Fitness:</b></h3>
 		<div>	
 		<?php
-			global $wpdb;
-			$result = $wpdb->get_results('SELECT tagName, tagID, parentID FROM wp_grape_tags_secondary');
 			foreach ($result as $row) {
 				if($row->parentID == 3) {
 					echo "<input type=\"checkbox\" name=\"fitnesstags[]\" value=\"$row->tagID\">";
@@ -156,8 +134,6 @@ include('plugins/accordionPlugin.js');
 		<h3 style="color: #38C0C7"><b>Bars:</b></h3>
 		<div>	
 		<?php
-			global $wpdb;
-			$result = $wpdb->get_results('SELECT tagName, tagID, parentID FROM wp_grape_tags_secondary');
 			foreach ($result as $row) {
 				if($row->parentID == 4) {
 					echo "<input type=\"checkbox\" name=\"barstags[]\" value=\"$row->tagID\">";
@@ -172,8 +148,6 @@ include('plugins/accordionPlugin.js');
 		<h3 style="color: #38C0C7"><b>Music:</b></h3>
 		<div>	
 		<?php
-			global $wpdb;
-			$result = $wpdb->get_results('SELECT tagName, tagID, parentID FROM wp_grape_tags_secondary');
 			foreach ($result as $row) {
 				if($row->parentID == 5) {
 					echo "<input type=\"checkbox\" name=\"musictags[]\" value=\"$row->tagID\">";
@@ -188,8 +162,6 @@ include('plugins/accordionPlugin.js');
 		<h3 style="color: #38C0C7"><b>Theatre:</b></h3>
 		<div>	
 		<?php
-			global $wpdb;
-			$result = $wpdb->get_results('SELECT tagName, tagID, parentID FROM wp_grape_tags_secondary');
 			foreach ($result as $row) {
 				if($row->parentID == 6) {
 					echo "<input type=\"checkbox\" name=\"theatretags[]\" value=\"$row->tagID\">";
@@ -204,8 +176,6 @@ include('plugins/accordionPlugin.js');
 		<h3 style="color: #38C0C7"><b>Museums:</b></h3>
 		<div>	
 		<?php
-			global $wpdb;
-			$result = $wpdb->get_results('SELECT tagName, tagID, parentID FROM wp_grape_tags_secondary');
 			foreach ($result as $row) {
 				if($row->parentID == 7) {
 					echo "<input type=\"checkbox\" name=\"museumtags[]\" value=\"$row->tagID\">";
@@ -220,8 +190,6 @@ include('plugins/accordionPlugin.js');
 		<h3 style="color: #38C0C7"><b>Gaming:</b></h3>
 		<div>	
 		<?php
-			global $wpdb;
-			$result = $wpdb->get_results('SELECT tagName, tagID, parentID FROM wp_grape_tags_secondary');
 			foreach ($result as $row) {
 				if($row->parentID == 8) {
 					echo "<input type=\"checkbox\" name=\"gamingtags[]\" value=\"$row->tagID\">";
@@ -236,8 +204,6 @@ include('plugins/accordionPlugin.js');
 		<h3 style="color: #38C0C7"><b>Outdoors:</b></h3>
 		<div>	
 		<?php
-			global $wpdb;
-			$result = $wpdb->get_results('SELECT tagName, tagID, parentID FROM wp_grape_tags_secondary');
 			foreach ($result as $row) {
 				if($row->parentID == 9) {
 					echo "<input type=\"checkbox\" name=\"outdoortags[]\" value=\"$row->tagID\">";
@@ -247,12 +213,15 @@ include('plugins/accordionPlugin.js');
 			}
 		?>
 		</div>
-	</div>
+	</div> <!-- end accordion -->
+
+	<br/><br/><br/>
 	
-	<div><br/><br/><br/></div>
-	
-		<input type="submit" id="updatePro" name="updatePro" value="Update Profile" style="color: black; font-size: 16px;"/>
-</form>
+	<input type="submit" id="updatePro" name="updatePro" value="Update Profile" style="color: black; font-size: 16px;"/>
+</form><br/>
+
+
+
 <?php
 updateProfileWithNewTags();
 ?>
@@ -268,7 +237,6 @@ function updateProfileWithNewTags() {
   	global $wpdb;
 	$current_user = wp_get_current_user();
 	$currID = $current_user->ID;
-	$currID = 1;								// HARDCODED FOR NOW ---- TAKE OUT LATER
   	echo "current user is  $currID <br>";
   	
   	$newTags = array();
@@ -354,8 +322,8 @@ function updateProfileWithNewTags() {
   		}
   		
   		/* Update DB with name and email */
-  		$updatedName = $_POST["name"];
-  		$updatedEmail = $_POST["email"];
+  		$updatedName = $_POST['name'];
+  		$updatedEmail = $_POST['email'];
 		echo "name and email are: $updatedName and $updatedEmail";
 }
 ?>

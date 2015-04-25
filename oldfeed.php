@@ -2,7 +2,6 @@
 function feed() {
 
 include('plugins/popoverPlugin.js');
-include('plugins/addingBLs.js');
 
 	$current_user = wp_get_current_user();
 	$username = $current_user->user_login;
@@ -25,6 +24,9 @@ include('plugins/addingBLs.js');
 		$BLID = $row->BucketListID;
 		array_push($blids, $BLID);
 		}
+		
+	//var_dump($blnames);
+	//var_dump($blids);
 	
 	
 	if ($current_user->returning_user == 0 ) {
@@ -40,7 +42,17 @@ include('plugins/addingBLs.js');
 	} else {
 	
 		showFeed();
+		
+		
+			
+	//If user clicks an add button
+	if(isset($_POST['AddToBL'])){
+		echo "Event ID: $id was clicked \n";
 	}
+		//echo '$user->returning_user is'.$username;
+		//return home_url("/?page_id=2"); // Else, returning user, bring to events page
+	}
+
 }
 
 function launchModal() {
@@ -388,25 +400,24 @@ function recommendEvents($userid) {
 	
 	/****** TAGS *******/
 	//table of tagIDs associated with user
-/****TAKEN OUT AND REPLACED WITH BIG LARGE QUERY --- all lines that start with '//* ' *****/
-		//* $result = $wpdb->get_results('SELECT tagID FROM wp_grape_user_tags WHERE userID='.$userid);
+	$result = $wpdb->get_results('SELECT tagID FROM wp_grape_user_tags WHERE userID='.$userid);
 	
 	//array of eventIDs
-	//* $eventIDs = array();
+	$eventIDs = array();
 	
 	//get all eventIDs associated with all tagIDs
-	//* foreach($result as $row) {
-	//* 	$eventResult = $wpdb->get_results('SELECT event_id FROM wp_grape_event_tags WHERE tag_id='.$row->tagID);
-	//* 	foreach($eventResult as $eventRow) {
-	//* 		array_push($eventIDs, $eventRow->event_id);
-	//* 	}
-	//* }
+	foreach($result as $row) {
+		$eventResult = $wpdb->get_results('SELECT event_id FROM wp_grape_event_tags WHERE tag_id='.$row->tagID);
+		foreach($eventResult as $eventRow) {
+			array_push($eventIDs, $eventRow->event_id);
+		}
+	}
 		echo "<b>Here are some events we think you'll enjoy!</b>";
 			
 	//go thru all the eventIDs we've accumulated (all are primary)
 	// go thru all events with those ID's and recommend them
-	//* foreach($eventIDs as $id) {
-	//* echo "id is $id";
+	foreach($eventIDs as $id) {
+	echo "id is $id";
 	/*
 		//Check if ID is primary or secondary
 		if ($id>9) {		//secondary ID
@@ -421,120 +432,57 @@ function recommendEvents($userid) {
 	*/
 	
 	
-	//* $events = $wpdb->get_results('SELECT * FROM wp_grape_events WHERE EventID='.$id);
-	$events = $wpdb->get_results('
-			SELECT e.EventName, e.LocationAddress, e.Description, e.EventID
-				FROM wp_grape_users AS u
-				JOIN wp_grape_user_tags AS ut ON u.ID = ut.userID
-				JOIN wp_grape_event_tags AS et ON ut.tagID = et.tag_id
-				JOIN wp_grape_events AS e ON e.EventID = et.event_id
-				WHERE u.ID ='.$userid);
-				
+	$events = $wpdb->get_results('SELECT * FROM wp_grape_events WHERE EventID='.$id);
+	
 	foreach($events as $event) {
 		$eventID = $event->EventID;
 		echo "event id is $eventID";
 			
 		//print info for event
-?>
-		<form method="post">
-<?php
-		echo "<div class=\"well\">
-					<h2> ".$event->EventName."</h2>";
+		echo "<div class=\"well\"><h2> ".$event->EventName."</h2>";
 		
-				if ($event->LocationAddress != null) 
-					echo "<label>Location: </label> ".$event->LocationAddress."<br/>";
-				
-				//* echo "<label>Category: </label> ".$event->Category."<br/>";
-				echo "<label>Description: </label> ".$event->Description."<br/><br/>";
+			if ($event->LocationAddress != null) 
+				echo "<label>Location: </label> ".$event->LocationAddress."<br/>";
 			
-				//echo "<button type=\"button\" class=\"btn btn-default\" id=\"$id\" name=\"AddToBL\" onclick=\"addItem($id);\" style=\"color:black; font-size: 14px;\">Add to my bucket list!</button>";
-				//echo "<button id=\"$eventID\" name=\"AddToBL\" type=\"button\" class=\"btn btn-warning popover-toggle\" data-container=\"body\" data-toggle=\"popover\" data-placement=\"right\" rel=\"popover\" title=\"My Bucketlists\">Add to Bucketlist!</button>";
-
-				echo "<button type=\"submit\" id=\"$eventID\" class=\"AddToBL\" type=\"button\" title=\"My Bucketlists\" >Add to Bucketlist!</button>";
-				
-				//echo "<input type=\"submit\" name=\"showBLs$eventID\" id=\"$eventID\" value=\"Add to Bucketlist!\">";
-				
-				
-				?>
-				<!-- your popup hidden content -->
-<!-- 
-				<div class="popover_content_wrapper" style="display: none">
-					<form method="post">
-						<?php
-							echo "<input type='hidden' name='event_id' value='$eventID' />";
-							 
-							foreach ($blnames as $key => $value) {
-								echo "<input type=\"checkbox\" name=\"blnames[]\" value=\"$value\"> $key <br>";
-							}
-						?>
-						<input type="submit" name="submitBLs" value="Submit">
-					</form>   
-				</div>
- -->
-			</div>
-		 </form>
+			echo "<label>Category: </label> ".$event->Category."<br/>";
+			echo "<label>Description: </label> ".$event->Description."<br/><br/>";
+		
+			//echo "<button type=\"button\" class=\"btn btn-default\" id=\"$id\" name=\"AddToBL\" onclick=\"addItem($id);\" style=\"color:black; font-size: 14px;\">Add to my bucket list!</button>";
 	
-	<?php useInfo(); ?>
+			echo "<button id=\"$eventID\" name=\"AddToBL\" type=\"button\" class=\"btn btn-warning popover-toggle\" data-container=\"body\" data-toggle=\"popover\" data-placement=\"right\" rel=\"popover\" title=\"My Bucketlists\">Add to Bucketlist!</button>";
+    		?>
+   			
+   			<!-- your popup hidden content -->
+    		<div class="popover_content_wrapper" style="display: none">
+    		<form method="post">
+  				<?php
+  				    echo "<input type='hidden' name='event_id' value='$eventID' />";
+  				    
+  					foreach ($blnames as $key => $value) {
+    					echo "<input type=\"checkbox\" name=\"blnames[]\" value=\"$value\"> $key <br>";
+    				}
+    			?>
+  				<input type="submit" name="submitBLs" value="Submit">
+			</form>   
+    	</div>
+	</div>
 	<!-- end foreach event loop -->
 	<?php
 	}
 	
-	/*
-		foreach ($events as $event){
-		$eventID = $event->EventID;
-		echo "HEYY EVENT ID IS $eventID";
-				if(isset($_POST['showBLs$eventID'])) {
-					displayPopover($blnames, $eventID);
-					if (isset($_POST['submitBLs$eventID'])) {
-						$bucketlists = $_POST['blnames'];
-						bucketlistsSelected($eventID, $bucketlists);
-					}
-				}
-		}
-	*/
-	//* }
-		
-}
-
-function useInfo(){
-	//if(isset)
-		if(isset($_POST['eventID']))
-			echo "yeah";
-		else
-			echo "no";
-}
-
-
-function displayPopover($blnames, $eventID) {
-?>
-	<div>
-		<form method="post">
-			<?php
-				echo "<input type='hidden' name='event_id' value='$eventID' />";
-				 
-				foreach ($blnames as $key => $value) {
-					echo "<input type=\"checkbox\" name=\"blnames[]\" value=\"$value\"> $key <br>";
-				}
-			echo "<input type=\"submit\" name=\"submitBLs$eventID\" value=\"Submit\">";
-			?>
-		</form>   
-	</div>
-<?php
-}
-
-function bucketlistsSelected($eventID, $bucketlists) {
-//Check if submit button hit
-		//if(isset($_POST['submitBLs'])){		
-		//	echo "I CLICKED THE SUBMIT BUTTON!";
+	}
+		//Check if submit button hit
+		if(isset($_POST['submitBLs'])){		
+			echo "I CLICKED THE SUBMIT BUTTON!";
 			
-		//	$bl_names= $_POST['blnames'];
-		//	$event_id = $_POST['event_id'];
+			$bl_names= $_POST['blnames'];
+			$event_id = $_POST['event_id'];
 			
 			echo "BL NAMES:\n";
-			var_dump($bucketlists);
+			var_dump($bl_names);
 			
 			echo "<br/> EVENT ID:\n";
-			var_dump($eventID);
+			var_dump($event_id);
 			
 			//Iterate through bucketlists checked and insert Event into BL
 			foreach($bl_names as $bl){
@@ -545,10 +493,9 @@ function bucketlistsSelected($eventID, $bucketlists) {
 			
 			}
 			//QUERY FOR EVENT'S TAGS, STORE IN USER TAGS TABLE
-		//}
-
-
+		}
 }
+
 
 // 
 // 

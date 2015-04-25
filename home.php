@@ -47,51 +47,44 @@ echo "</script>";
 	}
 		//Otherwise, user is logged in. Display regular content
 ?>
-	<center>
-	This is the homepage which may display upcoming events, your bucketlists, etc.
-	
-	<div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
-	<!-- Indicators -->
-	<ol class="carousel-indicators">
-    	<li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-    	<li data-target="#carousel-example-generic" data-slide-to="1"></li>
-    	<li data-target="#carousel-example-generic" data-slide-to="2"></li>
-  </ol>
 
-  <!-- Wrapper for slides -->
-  <div class="carousel-inner" role="listbox">
+     <!-- ///  begin content  /// -->
+    <div id="promo-carousel" class="carousel slide" data-ride="carousel">
+    <!-- Indicators -->
+  	<ol class="carousel-indicators">
+    	<li data-target="#promo-carousel" data-slide-to="0" class="active"></li>
+		<li data-target="#promo-carousel" data-slide-to="1"></li>
+		<li data-target="#promo-carousel" data-slide-to="2"></li>
+	</ol>
+	
+	<!-- Wrapper for slides -->
+  <div class="carousel-inner">
     <div class="item active">
-      <img src="http://www.medicalnewstoday.com/images/articles/271156-grapes.jpg" alt="grapes"/>
-      <div class="carousel-caption">
-        <h1>Caption 1</h1>
+      <img src="wp-content/plugins/grapevine/img/carousel/rockshow.jpg" alt="Rock concert image">
+        <div class="carousel-caption">
+          <h3>Recommender System suggests activities based on your preferences.</h3>
       </div>
     </div>
     <div class="item">
-      <img src="http://yspk.co/nlcfsaginaw/wp-content/uploads/sites/9/2013/08/bucketlist.jpg" alt="..."/>
+      <img src="wp-content/plugins/grapevine/img/carousel/skydiving.jpg" alt="Skydiving picture">
       <div class="carousel-caption">
-    	<h1>Caption 2 </h2>
+          <h3>See what your friends are doing and add it to your bucketist.</h3>
       </div>
     </div>
     <div class="item">
-    <img src="http://www.brownrowe.com/sites/default/files/projects/boston_college_gasson_hall.jpg" alt="..."/>
+      <img src="wp-content/plugins/grapevine/img/carousel/hotairballoon.jpg" alt="Camping couple">
       <div class="carousel-caption">
-    	<h1>Caption 3 </h2>
-    	</div>
-    	</div>
+          <h3>Embark on adventures and share with friends.</h3>
+      </div>
+    </div>  
+                      
   </div>
-
+ 
   <!-- Controls -->
-  <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
-    <span class="glyphicon glyphicon-chevron-left"></span>
-    <span class="sr-only">Previous</span>
-  </a>
-  <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
-    <span class="glyphicon glyphicon-chevron-right"></span>
-    <span class="sr-only">Next</span>
-  </a>
-</div>
+
+</div> <!-- Carousel -->
 	
-	
+
 
 <?php
 }

@@ -22,10 +22,11 @@ function testBucketlist(){
 		echo "<div class=\"blBackground\">";
 		$BLname = $row->BucketListName;
 		$desc = $row->Description;
+		$numEvents = $row->NumberOfEvents;
 		echo "<p class=\"blHeader\">".$BLname."</p>";
 		echo "<p class=\"blDesc\">".$desc."</p><br/><br><br/>";
 		
-		echo "<p class=\"blNumEvents\">x events</p>";
+		echo "<p class=\"blNumEvents\">".$numEvents." event(s)</p>";
 		echo "</div>";
 		echo "</div>";
 
@@ -99,7 +100,8 @@ function insertBL($BLname, $BLdesc){
 	
 	$wpdb->insert( 'wp_grape_bucketlists',
 				array(	'CreatedByUser' => $currUser->ID,
-						'BucketListName' => $BLname,
-						'Description' => $BLdesc),
-				array( '%d', '%s', '%s' ) );	
+						'BucketListName' => htmlentities($BLname),
+						'Description' => $BLdesc,
+						'NumberOfEvents' => 0),
+				array( '%d', '%s', '%s', '%d' ) );	
 }
