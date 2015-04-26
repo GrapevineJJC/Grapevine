@@ -1,13 +1,24 @@
 <script src="http://maps.googleapis.com/maps/api/js"></script>
+<<<<<<< HEAD
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+=======
+>>>>>>> origin/master
 <script>
 google.maps.event.addDomListener(window, 'load', initialize);
 
 function initialize() { 
+<<<<<<< HEAD
   	
   	var bounds = new google.maps.LatLngBounds();
 
 	var mapProp = {
+=======
+  	var myCenter = new google.maps.LatLng(42.335549, -71.168495);
+  	var bounds = new google.maps.LatLngBounds();
+
+	var mapProp = {
+    	center:myCenter,
+>>>>>>> origin/master
     	zoom:10,
    		panControl:true,
 		zoomControl:true,
@@ -19,6 +30,7 @@ function initialize() {
   	};
   
   	var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+<<<<<<< HEAD
   	
   	if (navigator.geolocation) {
      	alert("got here!");
@@ -56,6 +68,9 @@ function initialize() {
 			});
 	});
   	  
+=======
+  
+>>>>>>> origin/master
   	// Multiple Markers
 	var markers = [
     		[42.335549, -71.168495],
