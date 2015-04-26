@@ -1,6 +1,4 @@
 <?php
-//
-
 add_action( 'register_form', 'grape_register_form' );
 
 function grape_register_form(){
