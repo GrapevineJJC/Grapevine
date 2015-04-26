@@ -1,24 +1,13 @@
 <script src="http://maps.googleapis.com/maps/api/js"></script>
-<<<<<<< HEAD
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-=======
->>>>>>> origin/master
 <script>
 google.maps.event.addDomListener(window, 'load', initialize);
 
 function initialize() { 
-<<<<<<< HEAD
   	
   	var bounds = new google.maps.LatLngBounds();
 
 	var mapProp = {
-=======
-  	var myCenter = new google.maps.LatLng(42.335549, -71.168495);
-  	var bounds = new google.maps.LatLngBounds();
-
-	var mapProp = {
-    	center:myCenter,
->>>>>>> origin/master
     	zoom:10,
    		panControl:true,
 		zoomControl:true,
@@ -30,7 +19,6 @@ function initialize() {
   	};
   
   	var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
-<<<<<<< HEAD
   	
   	if (navigator.geolocation) {
      	alert("got here!");
@@ -53,13 +41,13 @@ function initialize() {
                     type: "GET",
                     data: dataString,
                     dataType: "json"
-                    });
+                });
                     
-                request.done ( function( data ) {      		
-                	$("#googleMap").html("");
-					$("#googleMap").append("<b>Address:</b> " + data.addresses.LocationAddress + "<br>");
-                    $("#googleMap").append("<b>Latitude:</b> " + data.addresses.Latitude  + "<br>");
-                    $("#googleMap").append("<b>Longitude:</b> " + data.addresses.Longitude  + "<br>");
+                request.done ( function( result ) {  
+                    var data = $.parseJSON(result);
+					$.each(data, function() {
+    					$("#arraySpitBack").html("[" + data.Latitude + ", " + data.Longitude + "] ");
+                    });
                 });
                     
                 request.fail (function(jqXHR, textStatus) {
@@ -67,10 +55,24 @@ function initialize() {
 				});
 			});
 	});
+	
+	var LatLngPairs = String(document.getElementById("arraySpitBack").value);
+	alert(LatLngPairs);
+	//var LatLngString = String(LatLngPairs);
+	//alert(LatLngStrng);
+	
+  	// THIS IS WHAT I AM GOING TO USE ONCE I CAN GET THE LAT LONG ARRAY FROM THE PHP FILE
+  	// Once I have access to this array, I am going to manipulate this array in this file in order too place
+  	// a marker for every location of every event in the database.
+  	// Once I am able to do this, I will uncomment these next 6 lines, and delete the hardcoded markers array on lines 77-80
+  	/* var LatLngArray;
+  	var markers = new Array();
+  	LatLngArray = LatLngPairs.split("] ");
+  	
+  	for (int i = 0; i < LatLngArray.length; i++) {
+  		markers[i] = LatLngArray[i];
+  	}   */
   	  
-=======
-  
->>>>>>> origin/master
   	// Multiple Markers
 	var markers = [
     		[42.335549, -71.168495],
@@ -106,14 +108,6 @@ function initialize() {
         this.setZoom(14);
         google.maps.event.removeListener(boundsListener);
     });
-        
-  	// SINGLE MARKER	
- 	/* var marker = new google.maps.Marker({
-  			position:myCenter,
-  			animation:google.maps.Animation.DROP,
-  			title:'Click to zoom'
-			});
-  	marker.setMap(map);	*/
 
   	// ZOOM WHEN CLICKING ON MARKER
  	/* google.maps.event.addListener(marker, 'click', function() {
