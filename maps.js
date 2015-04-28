@@ -21,6 +21,10 @@ function initialize() {
   	var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
   	
   	if (navigator.geolocation) {
+<<<<<<< HEAD
+=======
+     	alert("got here!");
+>>>>>>> origin/master
      	navigator.geolocation.getCurrentPosition(function (position) {
          		currentLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
      			map.setCenter(currentLocation);
@@ -29,31 +33,64 @@ function initialize() {
  	}
  	
  	$(document).ready(function(){
+<<<<<<< HEAD
 			
 			$( "#getAddressArray" ).click( function(){
 				alert("here");
+=======
+			$( "#mapspage" ).click( function(){
+			
+>>>>>>> origin/master
 				//get the form data and then serialize that
             	var dataString = $("#ajaxRequestForm").serialize();
             	
                 //start ajax request
                 var request = $.ajax({
+<<<<<<< HEAD
                     url: "wp-content/plugins/grapevine/maps.php",
+=======
+                    url: "maps.php",
+>>>>>>> origin/master
                     type: "GET",
                     data: dataString,
                     dataType: "json"
                 });
                     
+<<<<<<< HEAD
                 request.done ( function( data ) {  
                     	setMarkers(data);
+=======
+                request.done ( function( result ) {  
+                    var data = $.parseJSON(result);
+					$.each(data, function() {
+    					$("#arraySpitBack").html("[" + data.Latitude + ", " + data.Longitude + "] ");
+                    });
+>>>>>>> origin/master
                 });
                     
                 request.fail (function(jqXHR, textStatus) {
 						alert( "Request failed: " + textStatus );
+<<<<<<< HEAD
 				 });
 			});
 
 	});
 
+=======
+				});
+			});
+	});
+	
+	var LatLngPairs = String(document.getElementById("arraySpitBack").value);
+	alert(LatLngPairs);
+	//var LatLngString = String(LatLngPairs);
+	//alert(LatLngStrng);
+	
+  	// THIS IS WHAT I AM GOING TO USE ONCE I CAN GET THE LAT LONG ARRAY FROM THE PHP FILE
+  	// Once I have access to this array, I am going to manipulate this array in this file in order too place
+  	// a marker for every location of every event in the database.
+  	// Once I am able to do this, I will uncomment these next 6 lines, and delete the hardcoded markers array on lines 77-80
+>>>>>>> origin/master
   	/* var LatLngArray;
   	var markers = new Array();
   	LatLngArray = LatLngPairs.split("] ");
