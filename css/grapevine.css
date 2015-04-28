@@ -1,3 +1,6 @@
+.body{
+	background-color: black;
+}
 .modal-dialog {
 	width: 700px;
 }
@@ -6,11 +9,11 @@
 	background-color: #E3CEF6;
 	-moz-border-radius: 15px;
 	border-radius: 15px;
-	opacity: .5;
+	opacity: .1;
 }
 
 .blBackground:hover{
-	opacity: 1;
+	opacity: 0.1;
 }
 
 .blHeader{
@@ -20,11 +23,19 @@
 	font-size: 30px;
 }
 
+.feedHeader{
+	text-align:center;
+	font-family: 'Lato', sans-serif;
+	color: black;
+	font-size: 50px;
+}
+
 .blDesc{
 	text-align:center;
 	font-family: 'Lato', sans-serif;
 	color: black;
-	font-size: 15px;
+	font-size: 20px;
+	height: 50px;
 }
 
 .blNumEvents{
@@ -37,7 +48,6 @@
 .pageHeader {
 	text-align:center;
 	font-family: 'Lato', sans-serif;
-	color: #A901DB;
 	font-size: 50px;
 }
 
@@ -50,6 +60,25 @@ body {
 	max-width: 1100px;
 	min-width: 800px;
 	margin: 50px auto;
+}
+
+.main-text
+{
+    position: absolute;
+    top: 50px;
+    width: 96.66666666666666%;
+    color: #FFF;
+}
+
+.overlay { 
+  color:#380B61;
+  position:absolute;
+  z-index:120;
+  top:40%;
+  left:0;
+  width:100%;
+  text-align:center;
+  font-size: 100px;
 }
 
 #columns {
@@ -139,7 +168,50 @@ body {
 	background-color: #E3CEF6;
 	-moz-border-radius: 15px;
 	border-radius: 15px;
-	opacity: .5;
+	opacity: .7;
 	width: 300px;
 	height: 300px;
+}
+
+.paddedDiv{
+	padding-top: 35px;  
+	padding-left: 50px;
+	padding-right: 10px  
+    padding-bottom: 10px;  
+}
+.createdBy{
+	color: #380B61;
+}
+
+.myBucketLists{
+	color: #380B61;
+	font-weight: bold;
+	padding-top: 35px;  
+	padding-left: 50px;
+	padding-right: 10px  
+    padding-bottom: 10px; 
+}
+
+.updateBtn{
+	background-color: #380B61;
+	-moz-border-radius: 15px;
+	border-radius: 15px;
+	opacity: .7;
+	width: 150px;
+	height: 50px;
+	font-family: 'Lato', sans-serif;
+	color: white;
+	font-size: 30px;
+}
+
+.captions {
+font-size: 20px;
+}
+
+.wellBkg{
+	padding-top: 100px;
+	height: 500px;
+	background: url('../img/carousel/lake.jpg') ;
+	color: white;
+	font-size: 20px;
 }

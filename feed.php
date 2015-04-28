@@ -7,9 +7,85 @@ function feed() {
 	$current_user = wp_get_current_user();
 	$username = $current_user->user_login;
 		
-	echo "<h1>Welcome, $username</h1>";
+	//echo "<h1>Welcome, $username</h1>";
 		
 	global $wpdb;
+	
+	
+	?>
+<!-- Button HTML (to Trigger Modal) -->
+<div class="feedHeader">Explore & Create Events <a href="#myModal" role="button" class="btn btn-large btn-primary" data-toggle="modal">+</a> </div>
+ 
+<!-- Modal HTML -->
+<div id="myModal" class="modal fade">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Create An Event</h4>
+            </div>
+            
+
+            <div class="modal-body">  
+            <form method="post">
+                   <label>Name of Desired Place to Go, Event, or Activity:</label><br/>
+                    <input type="text" id="eventname" name="eventname" placeholder="E.g. Fin's Sushi+Grill or Kayaking on the Charles" size="70" /><br/><br/>
+                    
+                    <label>Address:</label><br/>
+                    <input type="text" id="eventaddress" name="eventaddress" placeholder="E.g. 123 Main Street, Chestnut Hill, MA 02467" size="70"/><br/><br/>
+                    
+                    <label>Description:</label><br/>
+                    <textarea id="eventdesc" name="eventdesc" placeholder="E.g. New sushi restaurant to try, or exciting adventures in Boston!" row="40" cols="65" maxlength="500"></textarea><br/><br/>
+                    
+                    <label>Category:</label><br/>
+                    <select id="eventcategory" name="eventcategory">
+                    	<option value="1">Restaurants</option>
+                    	<option value="2">Sports</option>
+                    	<option value="3">Fitness</option>
+                    	<option value="4">Bars</option>
+                    	<option value="5">Music</option>
+                    	<option value="6">Theatre</option>
+                    	<option value="7">Museums</option>
+                    	<option value="8">Gaming</option>
+                    	<option value="9">Outdoors</option>
+                    </select><br/><br/>
+           
+            </div>
+            
+            <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="EventCancel" name="EventCancel" style="color: black; font-size: 16px;">Cancel</button>
+                    <input type="submit" class="btn btn-default" id="createEvent" name="createEvent" value="Create" style="color: black; font-size: 16px;"/>
+            </div>
+            </form>
+            
+        </div>
+    </div>
+</div>
+	
+	<?php
+	if(isset($_POST['createEvent'])){
+		$eventaddress = null;
+		
+		$eventname = stripslashes($_POST['eventname']);
+		
+		if(isset($_POST['eventaddress'])) {
+			$eventaddress = stripslashes($_POST['eventaddress']);
+		}
+		
+		$eventdesc = stripslashes($_POST['eventdesc']);
+		$eventcategory = $_POST['eventcategory'];
+		
+	
+		
+		if (insertEvent($eventname, $eventaddress, $eventdesc, $eventcategory)) {
+			//echo "<br/> <br/> Thanks, $username!  You have successfully created an event. <br/>";
+			$eventID = selectEventID($eventname);
+			insertEventTag($eventID, $eventcategory);
+			insertUserTag($eventcategory);
+			discoverSecondaryTags($eventID);
+		}
+	}
+	
 	
 	//GET USERS BUCKETLIST IDs AND NAMES
 	$query = 'SELECT * FROM wp_grape_bucketlists WHERE CreatedByUser  =  '.$current_user->ID;
@@ -182,22 +258,6 @@ function launchModal() {
 							</center>
 							<br/><br/><br/>
 		
-							<table>
-								<tr>
-									<td>
-										<label>Your Profile Picture:<label><br/>
-									</td>
-									<td>
-										<form action="wp-content/plugins/grapevine/upload.php" method="post" enctype="multipart/form-data">
-											Select image to upload <br/>
-											<input type="file" name="fileToUpload" id="fileToUpload"><br/>
-											<input type="submit" value="Upload Image" name="submit">
-										</form>
-										<br/><br/>
-									</td>
-								</tr>
-							</table>
-		
 						</div>
 						<div class="modal-footer">
 							<button type="button" class="btn btn-default" data-dismiss="modal" id="ProfileCancel" name="EventCancel" style="color: black; font-size: 16px;">Cancel</button>
@@ -354,12 +414,9 @@ function recommendEvents($userid) {
 
 		$blnames[$BLname] = $BLID;
 	}
-	echo "<br>";
-	echo "<b>Here are some events we think you'll enjoy!</b>\n\n";
-	
 	//all events with tags the user has		
 	$events = $wpdb->get_results('
-			SELECT DISTINCT e.EventID, e.EventName, e.LocationAddress, e.Description, e.CreatedByUser
+			SELECT DISTINCT e.EventID, e.EventName, e.LocationAddress, e.Description, e.CreatedByUser, e.category
 				FROM wp_grape_users AS u
 				JOIN wp_grape_user_tags AS ut ON u.ID = ut.userID
 				JOIN wp_grape_event_tags AS et ON ut.tagID = et.tag_id
@@ -380,35 +437,20 @@ function recommendEvents($userid) {
 	}
 	//sort the tags by weight
 	asort($mainweightArray);echo "<br/>";
-	var_dump($mainweightArray);
+	//var_dump($mainweightArray);
 	
 	$tagsWithHighWeights = array();
 	foreach($mainweightArray as $m) {
 		array_push($tagsWithHighWeights, $m['tagID']);
-		echo "--".$m['tagID'];
+		//echo "--".$m['tagID'];
 	}
 	//now select all events with the first tag in $tagsWithHighWeights, then the next, etc.	
-
+		//showNewEvents($tagsWithHighWeights, $blnames);
 
 	foreach($events as $event) {
 		if ($currentNumberOfEvents < $maxNumberOfEvents) {
 			$eventID = $event->EventID;
-			
-// 			$event_tags = array();
-// 			$qry="SELECT * FROM wp_grape_event_tags WHERE event_id=".$eventID;
-// 			$qryresult = $wpdb->get_results($qry);
-// 			foreach($qryresult as $q) {
-// 				array_push($event_tags, $q->tag_id);
-// 			}
-// 			for($a=0; $a<count($event_tags); $a++) {
-// 				for($b=0; $b<count($tagsWithHighWeights); $b++){
-// 					if($event_tags[$a] == $tagsWithHighWeights[$b])
-// 						//yes add this event to top of feed
-// 						$a=count($event_tags);	//break out of first loop
-// 						break;					//break out of current loop
-// 				}
-// 			}
-			
+			$category = $event->category;
 			$name = $event->EventName;
 			$createdby = $event->CreatedByUser;
 			$jpg = 'wp-content/plugins/grapevine/profilepictures/'.$event->CreatedByUser.'_thumb.jpg';
@@ -421,64 +463,27 @@ function recommendEvents($userid) {
 			foreach ($result as $row) {
 				$nicename = $row->user_nicename;
 			}
+			
+			// $event_tags = array();
+// 			$qry="SELECT * FROM wp_grape_event_tags WHERE event_id=".$eventID;
+// 			$qryresult = $wpdb->get_results($qry);
+// 			foreach($qryresult as $q) {
+// 				array_push($event_tags, $q->tag_id);
+// 			}
+// 			for($a=0; $a<count($event_tags); $a++) {
+// 				for($b=0; $b<count($tagsWithHighWeights); $b++){
+// 					if($event_tags[$a] == $tagsWithHighWeights[$b]) {
+// 						//yes add this event to top of feed
+// 						//showNewEvents($newEventsToShow, $blnames);
+// 						//printThisEvent($eventID, $name, $createdby, $jpg, $loc, $desc, $nicename, $blnames);
+// 						echo "<br/>yeah this tag has a high weight <br/> tagid is $event_tags[$a]";
+// 						$a=count($event_tags);	//break out of first loop
+// 						break;					//break out of current loop
+// 					}
+// 				}
+// 			}
 
-				
-			//print info for event; cap at 50
-			echo "<div class=\"well\">";
-				echo "<div class=\"feedContent\">";
-					echo "<h2> ".$name."</h2>";
-					?>
-					<div class="container">
-						<div class="row">
-							<div class="col-md-1">
-							<?php
-							$jpg = 'wp-content/plugins/grapevine/profilepictures/'.$createdby.'_thumb.jpg';
-							if (file_exists($jpg)){
-								//echo "<img src=\"$jpg\" alt=\"Profile Picture\" /><br/>";
-								echo "<div class='circular' style = 'background-image: url($jpg)'></div>";
-							}
-							?>
-							</div>
-							<div class="col-md-4">				
-							<?php echo "<label> Created by User: </label>".$nicename; ?>
-							</div>
-						</div>
-					</div>
-												
-					<div class="container">
-						<div class="row">
-							<div class="col-md-6">			
-								<?php
-								if ($event->LocationAddress != null) 
-									echo "<label>Location: </label> ".$loc."<br/>";
-								echo "<label>Description: </label> ".$desc."<br/><br/>";
-					
-								echo "<button id=\"$eventID\" name=\"AddToBL\" type=\"button\" class=\"btn btn-warning popover-toggle\" data-container=\"body\" data-toggle=\"popover\" data-placement=\"right\" rel=\"popover\" title=\"My Bucketlists\">Add to Bucketlist!</button>";
-								//echo "<button id=\"$eventID\" class=\"AddToBL\" type=\"button\" title=\"My Bucketlists\" >Add to Bucketlist!</button>";
-								//echo "<input type=\"submit\" name=\"showBLs$eventID\" id=\"$eventID\" value=\"Add to Bucketlist!\">";
-								?>
-							</div>
-							<div class="col-md-6">
-								<!-- your popup hidden content -->
-								<?php echo "<div class=\"popover_content_wrapper\" id=\"$eventID\">"; ?>
-									<form method="post">
-										<?php
-										echo "<input type='hidden' name='event_id' value='$eventID' />";
-										
-										foreach ($blnames as $key => $value) {
-											echo "<input type=\"checkbox\" name=\"blnames[]\" value=\"$value\"> $key <br>";
-										}
-										?>
-										<input type="submit" name="submitBLs" value="Submit">
-									</form>
-								</div>
-							</div>
-						</div>
-					</div>
-					
-				</div>
-			</div>
-		<?php
+		printThisEvent($eventID, $name, $createdby, $jpg, $loc, $desc, $nicename, $blnames);		
 		}
 		$currentNumberOfEvents++;
 	} //end of foreach loop
@@ -515,16 +520,15 @@ function recommendEvents($userid) {
 	}
 	
 	
-	if(isset($_POST['submitBLs'])){		
-		echo "I CLICKED THE SUBMIT BUTTON!";
-			
+	if(isset($_POST['submitBLs'])){					
 		$bl_names= $_POST['blnames'];
 		$event_id = $_POST['event_id'];
-		
 		insertEventIntoBLs($bl_names, $event_id);
 	}
 			
 }
+
+
 
 function insertEventIntoBLs($bl_names, $event_id) {
 	global $wpdb;			
@@ -626,68 +630,86 @@ function showNewEvents($newEventsToShow, $blnames) {
 			foreach ($result2 as $row2) {
 				$nicename = $row2->user_nicename;
 			}
-		
-			//print info for event; cap at 50
-				echo "<div class=\"well\">";
-					echo "<div class=\"feedContent\">";
-						echo "<h2> ".$name."</h2>";
-						?>
-						<div class="container">
-							<div class="row">
-								<div class="col-md-1">
-								<?php
-								$jpg = 'wp-content/plugins/grapevine/profilepictures/'.$createdby.'_thumb.jpg';
-								if (file_exists($jpg)){
-									//echo "<img src=\"$jpg\" alt=\"Profile Picture\" /><br/>";
-									echo "<div class='circular' style = 'background-image: url($jpg)'></div>";
-								}
-								?>
-								</div>
-								<div class="col-md-4">				
-								<?php echo "<label> Created by User: </label>".$nicename; ?>
-								</div>
-							</div>
-						</div>
-													
-						<div class="container">
-							<div class="row">
-								<div class="col-md-6">			
-									<?php
-									if ($loc != null) 
-										echo "<label>Location: </label> ".$loc."<br/>";
-									echo "<label>Description: </label> ".$desc."<br/><br/>";
-						
-									echo "<button id=\"$eventID\" name=\"AddToBL\" type=\"button\" class=\"btn btn-warning popover-toggle\" data-container=\"body\" data-toggle=\"popover\" data-placement=\"right\" rel=\"popover\" title=\"My Bucketlists\">Add to Bucketlist!</button>";
-									//echo "<button id=\"$eventID\" class=\"AddToBL\" type=\"button\" title=\"My Bucketlists\" >Add to Bucketlist!</button>";
-									//echo "<input type=\"submit\" name=\"showBLs$eventID\" id=\"$eventID\" value=\"Add to Bucketlist!\">";
-									?>
-								</div>
-								<div class="col-md-6">
-									<!-- your popup hidden content -->
-									<?php echo "<div class=\"popover_content_wrapper\" id=\"$eventID\">"; ?>
-										<form method="post">
-											<?php
-											echo "<input type='hidden' name='event_id' value='$eventID' />";
-											
-											foreach ($blnames as $key => $value) {
-												echo "<input type=\"checkbox\" name=\"blnames[]\" value=\"$value\"> $key <br>";
-											}
-											?>
-											<input type="submit" name="submitBLs" value="Submit">
-										</form>
-									</div>
-								</div>
-							</div>
-						</div>
-						
-					</div>
-				</div>
-		<?php
+			printThisEvent($eventID, $name, $createdby, $jpg, $loc, $desc, $nicename, $blnames);
 		}
 	}
 
 }
 
+
+
+
+function printThisEvent($eventID, $name, $createdby, $jpg, $loc, $desc, $nicename, $blnames){
+	//print info for event; cap at 50
+	echo "<div class=\"well\">";
+	echo "<div class=\"feedContent\">";
+	echo "<div class=\"blHeader\"> ".$name."</div>";
+	?>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-1">
+					<?php
+					$jpg = 'wp-content/plugins/grapevine/profilepictures/'.$createdby.'_thumb.jpg';
+					$png = 'wp-content/plugins/grapevine/profilepictures/'.$createdby.'_thumb.png';	
+					$gif = 'wp-content/plugins/grapevine/profilepictures/'.$createdby.'_thumb.gif';
+					$jpeg = 'wp-content/plugins/grapevine/profilepictures/'.$createdby.'_thumb.jpeg';						
+					if (file_exists($jpg)){
+						echo "<div class='circular' style = 'background-image: url($jpg)'></div>";
+					}
+					else if (file_exists($jpeg)){
+							echo "<div class='circular' style = 'background-image: url($jpeg)'></div>";
+					}
+					else if (file_exists($png)){
+						echo "<div class='circular' style = 'background-image: url($png)'></div>";
+					}
+					
+					else if (file_exists($gif)){
+							echo "<div class='circular' style = 'background-image: url($gif)'></div>";
+					}
+					?>
+				</div>
+				<div class="col-md-5 paddedDiv createdBy">			
+					<?php echo "<label>Created by User: </label> $nicename"; ?>
+				</div>
+				<div class="col-md-6 myBucketLists">			
+					<?php echo "MY BUCKETLISTS"; ?>
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6">			
+					<?php
+					if ($loc != null) 
+						echo "<label>Location: </label> ".$loc."<br/>";
+					echo "<label>Description: </label> ".$desc."<br/><br/>";
+		
+					//echo "<button id=\"$eventID\" name=\"AddToBL\" type=\"button\" class=\"btn btn-warning popover-toggle\" data-container=\"body\" data-toggle=\"popover\" data-placement=\"right\" rel=\"popover\" title=\"My Bucketlists\">Add to Bucketlist!</button>";
+					//echo "<button id=\"$eventID\" class=\"AddToBL\" type=\"button\" title=\"My Bucketlists\" >Add to Bucketlist!</button>";
+					//echo "<input type=\"submit\" name=\"showBLs$eventID\" id=\"$eventID\" value=\"Add to Bucketlist!\">";
+					?>
+				</div>
+				<div class="col-md-6">
+					<!-- your popup hidden content -->
+					<?php echo "<div class=\"popover_content_wrapper\" id=\"$eventID\">"; ?>
+						<form method="post">
+							<?php
+							echo "<input type='hidden' name='event_id' value='$eventID' />";
+							
+							foreach ($blnames as $key => $value) {
+								echo "<input type=\"checkbox\" name=\"blnames[]\" value=\"$value\"> $key <br>";
+							}
+							?>
+							<input type="submit" name="submitBLs" value="Submit">
+						</form>
+					</div>
+				</div>
+			</div>
+	<?php
+	echo "</div>";
+	echo "</div>";
+	echo "</div>";
+}
 
 
 
@@ -706,4 +728,8 @@ function displayPopover($blnames, $eventID) {
 		</form>   
 	</div>
 <?php
+}
+
+function createModal(){
+
 }

@@ -173,12 +173,25 @@ add_shortcode('propic', 'propic');
 
 
 
-/* 3/12/15 - Catherine :  I commented out the next two lines because they gave us the header
- * errors that weren't allowing us to login.  Julie I think you had been working on addToBucketList.php?
- * 
- */
-//include 'addToBucketlist.php';
-//add_shortcode('addToBucketlist', 'addToBucketlist');
+/** Removes the admin bar for anyone who is not the administrator (grapevine_admin) **/
+//add_filter( 'show_admin_bar', '__return_false' );	//removes admin bar for everyone, including grapevine_admin
+add_action('after_setup_theme', 'remove_admin_bar');
+function remove_admin_bar() {
+	if (!current_user_can('administrator') && !is_admin()) {
+ 	 	show_admin_bar(false);
+	}
+}
+
+function my_wp_nav_menu_args( $args = '' ) {
+	if( !is_user_logged_in() ) {
+		$args['menu'] = 'logged-out';
+	}
+		return $args;
+	}
+add_filter( 'wp_nav_menu_args', 'my_wp_nav_menu_args' );
+
+
+
 
 /** REDIRECT USER AFTER SUCCESSFUL LOGIN **/
 add_filter( 'login_redirect', 'my_login_redirect', 10, 3 );

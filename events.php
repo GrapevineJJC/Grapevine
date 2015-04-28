@@ -22,10 +22,11 @@ $(document).ready(function(){
 </script>
 
 
-<!-- Button HTML (to Trigger Modal) -->
+<!-- 
+Button HTML (to Trigger Modal)
 <a href="#myModal" role="button" class="btn btn-large btn-primary" data-toggle="modal">Create An Event!</a>
  
-<!-- Modal HTML -->
+Modal HTML
 <div id="myModal" class="modal fade">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -70,31 +71,32 @@ $(document).ready(function(){
         </div>
     </div>
 </div>
+ -->
 <?php
 
-if(isset($_POST['createEvent'])){
-	$eventaddress = null;
-	
-	$eventname = $_POST['eventname'];
-	
-	if(isset($_POST['eventaddress'])) {
-		$eventaddress = $_POST['eventaddress'];
-	}
-	
-	$eventdesc = $_POST['eventdesc'];
-	$eventcategory = $_POST['eventcategory'];
-	
-
-	
-	if (insertEvent($eventname, $eventaddress, $eventdesc, $eventcategory)) {
-		echo "<br/> <br/> Thanks, $username!  You have successfully created an event. <br/>";
-		$eventID = selectEventID($eventname);
-		insertEventTag($eventID, $eventcategory);
-		insertUserTag($eventcategory);
-		discoverSecondaryTags($eventID);
-	}
-	
-}
+// if(isset($_POST['createEvent'])){
+// 	$eventaddress = null;
+// 	
+// 	$eventname = $_POST['eventname'];
+// 	
+// 	if(isset($_POST['eventaddress'])) {
+// 		$eventaddress = $_POST['eventaddress'];
+// 	}
+// 	
+// 	$eventdesc = $_POST['eventdesc'];
+// 	$eventcategory = $_POST['eventcategory'];
+// 	
+// 
+// 	
+// 	if (insertEvent($eventname, $eventaddress, $eventdesc, $eventcategory)) {
+// 		echo "<br/> <br/> Thanks, $username!  You have successfully created an event. <br/>";
+// 		$eventID = selectEventID($eventname);
+// 		insertEventTag($eventID, $eventcategory);
+// 		insertUserTag($eventcategory);
+// 		discoverSecondaryTags($eventID);
+// 	}
+// 	
+// }
 
 }
 

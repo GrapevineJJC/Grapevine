@@ -27,14 +27,22 @@ $png = 'profilepictures/'.$curr_id.'.png';
 $gif = 'profilepictures/'.$curr_id.'.gif';
 $jpeg = 'profilepictures/'.$curr_id.'.jpeg';
 
-if (file_exists($jpg))
+if (file_exists($jpg)){
 	unlink($jpg);
-else if (file_exists($png))
+	unlink('profilepictures/'.$curr_id."_thumb.jpg");
+	}
+else if (file_exists($png)){
 	unlink($png);
-else  if (file_exists($gif))
+	unlink('profilepictures/'.$curr_id."_thumb.png");
+	}
+else  if (file_exists($gif)){
 	unlink($gif);
-else if (file_exists($jpeg))
+	unlink('profilepictures/'.$curr_id."_thumb.gif");
+	}
+else if (file_exists($jpeg)){
 	unlink($jpeg);
+	unlink('profilepictures/'.$curr_id."_thumb.jpeg");
+	}
 
 // Check file size
 if ($_FILES["fileToUpload"]["size"] > 500000) {

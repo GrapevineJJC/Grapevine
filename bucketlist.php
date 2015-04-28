@@ -7,9 +7,10 @@ function testBucketlist(){
 	$username = $current_user->user_login;
 	$currID = $current_user->ID;
 	
-	echo "<div class=\"pageHeader\">My Bucketlists</div><br/>";
 	
-	echo '<a href="#blModal" role="button" class="btn btn-lg btn-primary" data-toggle="modal">+</a><br/><br/>';
+	echo "<div class=\"pageHeader\">My Bucketlists <a href=\"#blModal\" role=\"button\" class=\"btn btn-lg btn-primary\" data-toggle=\"modal\">+</a><br/><br/></div>";
+	
+	//echo ' <a href="#blModal" role="button" class="btn btn-lg btn-primary" data-toggle="modal">+</a><br/><br/>';
 
 	//Query bucketlist database for user's list of bucketlists
 	$query = 'SELECT * FROM wp_grape_bucketlists WHERE CreatedByUser  =  '.$currID;
@@ -20,14 +21,12 @@ function testBucketlist(){
 <?php
 	//Query for current users info. Pre-populate editprofile form.
 	$blids = array();
-?>	
-	<div class="well">
+?>
 	
 	<div class="container">
 	<div class="row">
 
 	<?php foreach ($result as $row) { ?>
- 			
  			<div class="col-md-4">
 				<form method="post">
 					
@@ -44,7 +43,7 @@ function testBucketlist(){
 						
 						echo "<p class=\"blHeader\">".$BLname."</p>";
 						echo "<p class=\"blDesc\">".$desc."</p><br/><br><br/>";
-						echo "<p class=\"blHeader\">".$BLID."</p>";
+						//echo "<p class=\"blHeader\">".$BLID."</p>";
 						
 						echo "<p class=\"blNumEvents\">".$numEvents." event(s)</p>";
 					echo "</button>";
@@ -52,8 +51,7 @@ function testBucketlist(){
 			echo "</div>";
 		}
 		echo "</div>";
-		echo "</div>";
-		echo "</div>";
+		echo "</div><br/>";
 		
 			foreach($blids as $id){
 				if(isset($_POST[$id])){
@@ -108,6 +106,22 @@ $(document).ready(function(){
   
 <?php
 
+		if(isset($_POST['update'])){
+			$updates = $_POST['completed'];
+			//var_dump($updates);			
+	
+			//Iterate through bucketlists checked and insert Event into BL
+			foreach($updates as $ups){
+				//echo "$ups";
+				
+				$update_query = "UPDATE wp_grape_blJoinEvents SET isCompleted = 1 WHERE EventID = ".$ups;
+				//echo "$update_query";
+				$wpdb->query($update_query);
+			}
+			
+			
+		}
+		
 	if(isset($_POST['CreateBucketList'])){
 		$BLname = $_POST['BLname'];
 		$BLdesc = $_POST['BLdesc'];
@@ -128,6 +142,8 @@ function insertBL($BLname, $BLdesc){
 						'Description' => $BLdesc,
 						'NumberOfEvents' => 0),
 				array( '%d', '%s', '%s', '%d' ) );	
+				
+
 }
 
 function displayBL($id){	
@@ -139,10 +155,11 @@ function displayBL($id){
 			AND blj.BucketlistID = '.$id;
 	
 	$result = $wpdb->get_results($query);
+
+	?> <form method="post"> <?php	
 	
 	//print info for event
-	foreach ($result as $row) {
-			
+	foreach ($result as $row) {			
 			$eventID = $row->EventID;
 			$name = $row->EventName;
 			$loc = $row->LocationAddress;
@@ -150,11 +167,14 @@ function displayBL($id){
 			$completed = $row->isCompleted;
 			$category = $row->category;
 			
-			echo "<div class=\"well\">";
+			$checked="";
+			if($completed == 1)
+				$checked = "checked";
+			
+ 			echo "<div class=\"well\">";
 			echo "<div class=\"feedContent\">";
 			echo "<div class=\"blHeader\"> ".$name."</div>";
 			
-
 			//echo "<input type=\"checkbox\" name=\"completed\" data-size=\"xl\">";
 			?>			
 							<div class="row">
@@ -162,21 +182,22 @@ function displayBL($id){
 								<?php getCat($category); ?>
 								</div>
 								
-								<div class="col-md-6"><?php
+								<div class="col-md-7"><?php
 								//if ($event->LocationAddress != null) 
-								echo "<label>Location: </label> ".$loc."<br/>";
+								echo "<label>Location: </label> ".$loc."<br/><br/>";
 								echo "<label>Description: </label> ".$desc."<br/><br/>"; ?>
 								</div>
 								
-								<div class="col-md-4">
-								<?php echo "<input type=\"checkbox\" id=\"$eventID\" class=\"blCheck\" name=\"completed\">";?>
+								<div class="col-md-3">
+								<?php echo "<input type=\"checkbox\" name=\"completed[]\" class=\"blCheck\" value=\"$eventID\" $checked>";?>
 								</div>
 							</div>
-						</div>
-			</div>
-			</div>
+ 			</div>
+ 			</div>
+<?php } ?>
+		<center><button type="submit" name="update" class="updateBtn" value="Update" />Update</button></center>
+		</form>
 <?php
-	}
 }
 
 function getCat($category){
@@ -215,7 +236,50 @@ function getCat($category){
 					break;
 				case 9:
 					//echo "Outdoors<br/>";
-					echo "<img src='wp-content/plugins/grapevine/img/categories/outdoors.png' height=\"100\" width=\"100\" />";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/outdoor.png' height=\"100\" width=\"100\" />";
+					break;
+				default: echo "";
+						break;				
+			}
+}
+
+function getSmallCat($category){
+			switch($category){
+				case 1:
+					//echo "Restaraunts<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/dining.png' height=\"50\" width=\"50\" />";
+					break;
+				case 2:
+					//echo "Sports<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/baseball.png' height=\"50\" width=\"50\" />";
+					break;
+				case 3:
+					//echo "Fitness<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/fit.jpg' height=\"50\" width=\"50\" />";
+					break;
+				case 4:
+					//echo "Bars<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/bar.png' height=\"30\" width=\"30\" />";
+					break;
+				case 5:
+					//echo "Music<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/music.png' height=\"30\" width=\"30\" />";
+					break;
+				case 6:
+					//echo "Theater<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/theater.png' height=\"30\" width=\"30\" />";
+					break;
+				case 7:
+					//echo "Museums<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/museum.png' height=\"30\" width=\"30\" />";
+					break;
+				case 8:
+					//echo "Gaming<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/gaming.png' height=\"30\" width=\"30\" />";
+					break;
+				case 9:
+					//echo "Outdoors<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/outdoor.png' height=\"50\" width=\"50\" />";
 					break;
 				default: echo "";
 						break;				

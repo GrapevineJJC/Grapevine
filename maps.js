@@ -21,76 +21,65 @@ function initialize() {
   	var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
   	
   	if (navigator.geolocation) {
-<<<<<<< HEAD
-=======
-     	alert("got here!");
->>>>>>> origin/master
      	navigator.geolocation.getCurrentPosition(function (position) {
          		currentLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
      			map.setCenter(currentLocation);
-     			alert("Current location is (" + position.coords.latitude + ", " + position.coords.longitude + ").");
+     			//alert("Current location is (" + position.coords.latitude + ", " + position.coords.longitude + ").");
      	});
  	}
  	
- 	$(document).ready(function(){
-<<<<<<< HEAD
+ 	
+ 	
+ 	/*var ARRAYFROMPHP = [];
+	$(document).ready(function(){
+		$.getJSON('wp-content/plugins/grapevine/maps.php', function(data){
+ 			alert("got here");
+ 			ARRAYFROMPHP = data;
+ 			alert(ARRAYFROMPHP);
+		});
+	}); */
+ 	
+ 	/*$(document).ready(function(){
 			
-			$( "#getAddressArray" ).click( function(){
-				alert("here");
-=======
-			$( "#mapspage" ).click( function(){
 			
->>>>>>> origin/master
-				//get the form data and then serialize that
-            	var dataString = $("#ajaxRequestForm").serialize();
-            	
+			$.ajax({
+    			type: 'POST',
+   		 		url: 'wp-content/plugins/grapevine/maps.php',
+    			success: 	function(result) {
+        						var data = jQuery.parseJSON(result);
+        						alert(data.stuff);
+    						}
+			});
+			
                 //start ajax request
-                var request = $.ajax({
-<<<<<<< HEAD
+             /*   var request = $.ajax({
                     url: "wp-content/plugins/grapevine/maps.php",
-=======
-                    url: "maps.php",
->>>>>>> origin/master
                     type: "GET",
                     data: dataString,
                     dataType: "json"
-                });
+                }); 
+                
+                var request = $.ajax({
+       					 url: "wp-content/plugins/grapevine/maps.php",
+        				dataType: 'application/json',
+        				complete: function(data){
+            			alert(data)
+        		},
+        		success: function(data){
+            		alert(data)
+        		}
                     
-<<<<<<< HEAD
                 request.done ( function( data ) {  
                     	setMarkers(data);
-=======
-                request.done ( function( result ) {  
-                    var data = $.parseJSON(result);
-					$.each(data, function() {
-    					$("#arraySpitBack").html("[" + data.Latitude + ", " + data.Longitude + "] ");
-                    });
->>>>>>> origin/master
                 });
                     
                 request.fail (function(jqXHR, textStatus) {
 						alert( "Request failed: " + textStatus );
-<<<<<<< HEAD
 				 });
 			});
 
-	});
+	}) */
 
-=======
-				});
-			});
-	});
-	
-	var LatLngPairs = String(document.getElementById("arraySpitBack").value);
-	alert(LatLngPairs);
-	//var LatLngString = String(LatLngPairs);
-	//alert(LatLngStrng);
-	
-  	// THIS IS WHAT I AM GOING TO USE ONCE I CAN GET THE LAT LONG ARRAY FROM THE PHP FILE
-  	// Once I have access to this array, I am going to manipulate this array in this file in order too place
-  	// a marker for every location of every event in the database.
-  	// Once I am able to do this, I will uncomment these next 6 lines, and delete the hardcoded markers array on lines 77-80
->>>>>>> origin/master
   	/* var LatLngArray;
   	var markers = new Array();
   	LatLngArray = LatLngPairs.split("] ");
@@ -102,7 +91,8 @@ function initialize() {
   	// Multiple Markers
 	var markers = [
     		[42.335549, -71.168495],
-        	[42.350000, -71.200000]
+        	[40.350000, -71.200000],
+        	[44.234234, -71.189284]
     ];
     
     // Display multiple markers on a map
