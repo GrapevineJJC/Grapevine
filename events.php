@@ -171,7 +171,7 @@ function insertUserTag($tagID) {
 		array_push($tags, $row->tagID);
 	}
 	
-	if (count($tags) == 0 ) {
+	if (count($tags) == 0 ) {	// user does not have this tag yet; insert it and its counter is set to 1 (by DB)
 		//user has no primary tags yet
 		$wpdb->insert( 'wp_grape_user_tags',
 				array(	'userID' => $currUser->ID,
@@ -179,11 +179,12 @@ function insertUserTag($tagID) {
 				array( '%d', '%d' ) );	
 	} else {
 		for ($i=0; $i<count($tags); $i++) {
-			if ($tags[$i] == $tagID) {
+			if ($tags[$i] == $tagID) {		// user already has this tag; just update its counter
+				updateWeight($currUser->ID,$tagID);
 				continue;
 			}
 			if ( ($tags[$i] != $tagID) && ( $i == count($tags)-1) ) {
-				//user doesn't have this primary tag, so insert it
+				//user doesn't have this primary tag, so insert it and
 				$wpdb->insert( 'wp_grape_user_tags',
 					array(	'userID' => $currUser->ID,
 							'tagID' => $tagID),
@@ -192,6 +193,7 @@ function insertUserTag($tagID) {
 		}
 	}
 }
+
 
 function discoverSecondaryTags($eventID) {
 	global $wpdb;
@@ -264,7 +266,7 @@ function insertSecondaryTags($eventID, $newSecondaryTags) {
 		array_push($usersTags, $row->tagID);
 	}
  	
- 	//If the user has no secondary tags, insert
+ 	//If the user has no secondary tags, insert; counter will be set to 1
  	if (count($usersTags) == 0) {
  		foreach($tagIDs as $tagID) {
  			$wpdb->insert( 'wp_grape_user_tags',
@@ -274,17 +276,19 @@ function insertSecondaryTags($eventID, $newSecondaryTags) {
 		}
  	} else {
 		for($i=0; $i<count($tagIDs); $i++) {
-				for($j=0; $j<count($usersTags); $j++) {
-					if ( $tagIDs[$i] == $usersTags[$j] )
-						break;	//because user already has that tag; increment $tagIDs				
-					if (( $tagIDs[$i] != $usersTags[$j] ) && ( $j==count($usersTags)-1 ) ) {
-						echo "we should insert this id: $tagIDs[$i]";
-					    $wpdb->insert( 'wp_grape_user_tags',
-		 					array(	'userID' => $currUser->ID,
-		 							'tagID' => $tagIDs[$i]),
-		 					array( '%d', '%d' ) );	
-					}
+			for($j=0; $j<count($usersTags); $j++) {
+				if ( $tagIDs[$i] == $usersTags[$j] ) {	// user already has that tag; just increment counter
+					updateWeight($userID,$usersTags[$j]);
+					break;								//because user already has that tag; increment $tagIDs
+					}		
+				if (( $tagIDs[$i] != $usersTags[$j] ) && ( $j==count($usersTags)-1 ) ) {
+					//echo "we should insert this id: $tagIDs[$i]";
+					$wpdb->insert( 'wp_grape_user_tags',
+						array(	'userID' => $currUser->ID,
+								'tagID' => $tagIDs[$i]),
+						array( '%d', '%d' ) );	
 				}
+			}
 		}
  	}
  	//insert the secondary tags for the event into the event_tags table
@@ -302,6 +306,23 @@ function getLocation($page, $pattern) {
 	$explodedRes = explode(", ",$res[0][0]);
 	$location = array("latitude" => $explodedRes[0], "longitude" => $explodedRes[1]);
 	return $location;
+}
+
+
+function updateWeight($userID, $tagID) {
+	global $wpdb;
+	$counter=0;
+	//get counter
+	$query = "SELECT weight FROM wp_grape_user_tags WHERE userID=".$userID." AND tagID=".$tagID;
+	$result = $wpdb->get_results($query);
+	foreach($result as $row) {
+		$counter = $row->weight;
+	}	
+	//increment counter
+	$counter++;
+	//store new counter back in DB
+	$update_query = "UPDATE wp_grape_user_tags SET weight = ".$counter." WHERE userID=".$userID." AND tagID=".$tagID;
+	$wpdb->query($update_query);
 }
 
 ?>

@@ -44,7 +44,6 @@ $debug = 0;
  		dbDelta ($sql);
  		
  		add_option ( "grapevine_db_version", $grapevine_db_version );
- 		//add_filter( 'login_redirect', 'my_login_redirect', 10, 3 );
   }
   register_activation_hook ( __FILE__, 'grapevine_install' );
   
@@ -121,6 +120,22 @@ function load_javascript() {
  	wp_enqueue_script( 'javascript', '/wp-content/plugins/grapevine/maps.js' );
 }
  
+/* loading Google Maps API */
+// <script src="http://maps.googleapis.com/maps/api/js"></script>
+
+/**
+ * This function used to register google map script.
+ * @author Flipper Code <hello@flippercode.com>
+ * @version 1.0.0
+ * @package Maps
+ * 4/27/15 ~ Grabbed this from another plugin - JC
+ */
+function wpgmp_scripts_method(){
+    wp_enqueue_script('wpgmp_map','http://www.google.com/jsapi');
+}
+
+
+ 
  //LOAD PLUGIN
  function load_grapevine(){
     //wp_enqueue_script( 'grapevine_script', plugins_url( 'plugins/dragDropPlugin.js' , __FILE__ ), array(), null, true);
@@ -156,8 +171,6 @@ add_shortcode('maps', 'maps');
 include 'edit_propic.php';
 add_shortcode('propic', 'propic');
 
-include 'editpro.php';
-add_shortcode('editpro', 'editpro');
 
 
 /* 3/12/15 - Catherine :  I commented out the next two lines because they gave us the header
@@ -169,7 +182,6 @@ add_shortcode('editpro', 'editpro');
 
 /** REDIRECT USER AFTER SUCCESSFUL LOGIN **/
 add_filter( 'login_redirect', 'my_login_redirect', 10, 3 );
-
 function my_login_redirect( $redirect_to, $request, $user ) {
 
 	//echo 'IN MY_LOGIN_REDIRECT\n';

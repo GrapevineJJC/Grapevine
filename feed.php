@@ -1,8 +1,8 @@
 <?php
 function feed() {
 
-include('plugins/popoverPlugin.js');
-include('plugins/addingBLs.js');
+	include('plugins/popoverPlugin.js');
+	include('plugins/addingBLs.js');
 
 	$current_user = wp_get_current_user();
 	$username = $current_user->user_login;
@@ -25,7 +25,7 @@ include('plugins/addingBLs.js');
 		
 		$BLID = $row->BucketListID;
 		array_push($blids, $BLID);
-		}
+	}
 	
 	
 	if ($current_user->returning_user == 0 ) {
@@ -39,192 +39,185 @@ include('plugins/addingBLs.js');
 			launchModal();							// TODO
 		//return home_url("/?page_id=44");	//First time logging in, make bucketlist.
 	} else {
-	
 		showFeed();
 	}
 }
+
 
 function launchModal() {
 
 	$current_user = wp_get_current_user();
 	$username = $current_user->user_login;
-?>
+	?>
 
-<script type="text/javascript">
+	<script type="text/javascript">
+		$(document).ready(function(){
+			$("#editProfileModal").modal('show');			
+		});
+		
+	</script>
 
-$(document).ready(function(){
-	$("#editProfileModal").modal('show');			
-});
-
-</script>
-
-<!-- This is the html for the Edit Profile Modal. -->
-<!-- Users click button to launch modal, enter the input fields, and insert into db -->
-<div class="profileModal">
-    <!-- Button HTML (to Trigger Modal) -->
-    
-    <!-- Modal HTML -->
-    <div id="editProfileModal" class="modal fade" tabindex="-1">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h1 class="modal-title">Edit Your Profile</h1>
-                </div>
-                <form method="post">
-                <div class="modal-body">                  
-                    <center><p>Tell us about yourself!</p></center><br/><br/>
-                   
-                   <label>Your Name:</label><br/>
-                    <input type="text" id="name" name="name" placeholder="Name" /><br/><br/><br/>
-                    
-                    <label>Your email:</label><br/>
-                    <input type="text" id="email" name="email" placeholder="Email Address" /><br/><br/><br/>
-
-                    <label>Your Phone Number:</label><br/>
-					<input type="text" id="phone" name="phone" placeholder="Phone Number" /><br/><br/><br/>
-
-					<label>Your Bio:</label><br/>
-					<textarea id="bio" name="bio" rows="10" cols="50" placeholder="Enter Your Bio"></textarea><br/><br/>
-
-	
-	
-					<!-- (EDIT THIS AFTER TALKING TO ALVAREZ)
-						Here we should query the database for all existing tags.
-						Hardcoded a few tags for now.  2/14/2015                 -->
-					<label><b>Check all tags that interest you:</b></label><br/>
-					<center>
-					<div style="float: left; text-align:left; width: 33%;">						
-						<input type="checkbox" name="usertags[]" value="sports"/> Sports<br/>
-						<input type="checkbox" name="usertags[]" value="nightlife"/> Nightlife<br/>
-						<input type="checkbox" name="usertags[]" value="food"/> Food<br/>
-						<input type="checkbox" name="usertags[]" value="beauty"/> Beauty<br/>
-						<input type="checkbox" name="usertags[]" value="recreation"/> Recreation<br/>
-					</div>	
-					<div style="float: left; text-align:left; width: 33%;">
-						<input type="checkbox" name="usertags[]" value="music"/> Music<br/> 
-						<input type="checkbox" name="usertags[]" value="volunteering"/> Volunteering<br/>
-						<input type="checkbox" name="usertags[]" value="beer"/> Beer<br/>
-						<input type="checkbox" name="usertags[]" value="college"/> College<br/>
-						<input type="checkbox" name="usertags[]" value="shopping"/> Shopping<br/>
+	<!-- This is the html for the Edit Profile Modal. -->
+	<!-- Users click button to launch modal, enter the input fields, and insert into db -->
+	<div class="profileModal">
+		<!-- Button HTML (to Trigger Modal) -->
+		
+		<!-- Modal HTML -->
+		<div id="editProfileModal" class="modal fade" tabindex="-1">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h1 class="modal-title">Edit Your Profile</h1>
 					</div>
-					<div style="float: right; text-align:left; width: 33%;">
-						<input type="checkbox" name="usertags[]" value="books"/> Books<br/> 
-						<input type="checkbox" name="usertags[]" value="tech"/> Tech<br/>
-						<input type="checkbox" name="usertags[]" value="art"/> Art<br/>
-						<input type="checkbox" name="usertags[]" value="gaming"/> Gaming<br/>
-						<input type="checkbox" name="usertags[]" value="movies"/> Movies<br/>
-					</div>
-					</center>
-					<br/><br/><br/><br/>
-					<br/>
-
-					
-					
-					<!-- Additional preference updates to refine recommendations upon
-						 very first log-in. 	2/16/2015		--> 
-						 
-					<label><b>If you are interested in sports, check your favorite(s):</b></label><br/>
-					<center>
-					<div style="float: left; text-align:left; width: 33%;">
-						<input type="checkbox" name="sportstags[]" value="football"/> Football <br/>
-						<input type="checkbox" name="sportstags[]" value="hockey"/> Hockey <br/>
-						<input type="checkbox" name="sportstags[]" value="basketball"/> Basketball <br/>
-					</div>
-					<div style="float: left; text-align:left; width: 33%;">
-						<input type="checkbox" name="sportstags[]" value="baseball"/> Baseball		<br/>
-						<input type="checkbox" name="sportstags[]" value="soccer"/> Soccer	<br/>
-						<input type="checkbox" name="sportstags[]" value="volleyball"/> Volleyball <br/>
-					</div>	
-					<div style="float: right; text-align:left; width: 33%;">
-						<input type="checkbox" name="sportstags[]" value="tennis"/> Tennis <br/>
-						<input type="checkbox" name="sportstags[]" value="swimming"/> Swimming <br/>
-						<input type="checkbox" name="sportstags[]" value="running"/> Running <br/>
-					</div>
-					</center>
-					<br/><br/><br/><br/>
-					<br/>
-
-					
-					<label><b>If applicable, let us know what kinds of restaurants you like:</b></label><br/>
-					<center>
-					<div style="float: left; text-align:left; width: 33%;">
-						<input type="checkbox" name="foodtags[]" value="american"/> American<br/>
-						<input type="checkbox" name="foodtags[]" value="italian"/> Italian<br/>
-						<input type="checkbox" name="foodtags[]" value="chinese"/> Chinese<br/>
-						<input type="checkbox" name="foodtags[]" value="japanese"/> Japanese/Sushi<br/>
-						<input type="checkbox" name="foodtags[]" value="thai"/> Thai<br/>
-						<input type="checkbox" name="foodtags[]" value="mexican"/> Mexican<br/>
-						<input type="checkbox" name="foodtags[]" value="spanish"/> Spanish<br/>
-						<input type="checkbox" name="foodtags[]" value="indian"/> Indian<br/>
-						<input type="checkbox" name="foodtags[]" value="french"/> French<br/>
-						<input type="checkbox" name="foodtags[]" value="cuban"/> Cuban<br/>
-					</div>	
-					<div style="float: left; text-align:left; width: 33%;">
-						<input type="checkbox" name="foodtags[]" value="korean"/> Korean<br/>		
-						<input type="checkbox" name="foodtags[]" value="greek"/> Greek<br/>
-						<input type="checkbox" name="foodtags[]" value="german"/> German</br>
-						<input type="checkbox" name="foodtags[]" value="latinamerican"/> Latin American<br/>
-						<input type="checkbox" name="foodtags[]" value="mideastern"/> Middle Eastern<br/>
-						<input type="checkbox" name="foodtags[]" value="southern"/> Southern<br/>
-						<input type="checkbox" name="foodtags[]" value="vietnamese"/> Vietnamese<br/>
-						<input type="checkbox" name="foodtags[]" value="tapas"/> Tapas<br/>
-						<input type="checkbox" name="foodtags[]" value="pizzeria"/> Pizzeria<br/>
-						<input type="checkbox" name="foodtags[]" value="pubgrills"/> Pubs/Grills<br/>	
-					</div>	
-					<div style="float: right; text-align:left; width: 33%;">
-						<input type="checkbox" name="foodtags[]" value="barbecue"/> Barbecue<br/>	
-						<input type="checkbox" name="foodtags[]" value="dimsum"/> Dim Sum<br/>
-						<input type="checkbox" name="foodtags[]" value="vegan"/> Vegan<br/>
-						<input type="checkbox" name="foodtags[]" value="deli"/> Deli<br/>
-						<input type="checkbox" name="foodtags[]" value="vegan"/> Vegan<br/>
-						<input type="checkbox" name="foodtags[]" value="fastfood"/> Fast Food<br/>
-						<input type="checkbox" name="foodtags[]" value="seafood"/> Seafood<br/>
-						<input type="checkbox" name="foodtags[]" value="brunch"/> Brunch<br/>
-						<input type="checkbox" name="foodtags[]" value="diner"/> Diner<br/>
-						<input type="checkbox" name="foodtags[]" value="dessert"/> Dessert<br/>
-					<br/><br/><br/>
-					</div>
-					</center>
-					<br/><br/><br/>
-
-					<table>
-					<tr>
-					<td>
-		 			<label>Your Profile Picture:<label><br/>
-		 			</td>
-		 			<td>
-		 			<form action="wp-content/plugins/grapevine/upload.php" method="post" enctype="multipart/form-data">
-    					Select image to upload <br/>
-    					<input type="file" name="fileToUpload" id="fileToUpload"><br/>
-    					<input type="submit" value="Upload Image" name="submit">
-					</form><br/><br/>
-					</td>
-					</tr>
-					</table>
-
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" id="ProfileCancel" name="EventCancel" style="color: black; font-size: 16px;">Cancel</button>
-                	<!--<button class="btn btn-lg btn-success">Update Profile</button>-->
-                    <input type="submit" class="btn btn-default" id="updateProfile" name="updateProfile" value="Update Profile" style="color: black; font-size: 16px;"/>
-                    
-                </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+					<form method="post">
+						<div class="modal-body">                  
+							<center><p>Tell us about yourself!</p></center><br/><br/>
+						   
+						   <label>Your Name:</label><br/>
+							<input type="text" id="name" name="name" placeholder="Name" /><br/><br/><br/>
+							
+							<label>Your email:</label><br/>
+							<input type="text" id="email" name="email" placeholder="Email Address" /><br/><br/><br/>
+		
+							<label>Your Phone Number:</label><br/>
+							<input type="text" id="phone" name="phone" placeholder="Phone Number" /><br/><br/><br/>
+		
+							<label>Your Bio:</label><br/>
+							<textarea id="bio" name="bio" rows="10" cols="50" placeholder="Enter Your Bio"></textarea><br/><br/>
+		
+							<!-- (EDIT THIS AFTER TALKING TO ALVAREZ)
+								Here we should query the database for all existing tags.
+								Hardcoded a few tags for now.  2/14/2015                 -->
+							<label><b>Check all tags that interest you:</b></label><br/>
+							<center>
+							<div style="float: left; text-align:left; width: 33%;">						
+								<input type="checkbox" name="usertags[]" value="sports"/> Sports<br/>
+								<input type="checkbox" name="usertags[]" value="nightlife"/> Nightlife<br/>
+								<input type="checkbox" name="usertags[]" value="food"/> Food<br/>
+								<input type="checkbox" name="usertags[]" value="beauty"/> Beauty<br/>
+								<input type="checkbox" name="usertags[]" value="recreation"/> Recreation<br/>
+							</div>	
+							<div style="float: left; text-align:left; width: 33%;">
+								<input type="checkbox" name="usertags[]" value="music"/> Music<br/> 
+								<input type="checkbox" name="usertags[]" value="volunteering"/> Volunteering<br/>
+								<input type="checkbox" name="usertags[]" value="beer"/> Beer<br/>
+								<input type="checkbox" name="usertags[]" value="college"/> College<br/>
+								<input type="checkbox" name="usertags[]" value="shopping"/> Shopping<br/>
+							</div>
+							<div style="float: right; text-align:left; width: 33%;">
+								<input type="checkbox" name="usertags[]" value="books"/> Books<br/> 
+								<input type="checkbox" name="usertags[]" value="tech"/> Tech<br/>
+								<input type="checkbox" name="usertags[]" value="art"/> Art<br/>
+								<input type="checkbox" name="usertags[]" value="gaming"/> Gaming<br/>
+								<input type="checkbox" name="usertags[]" value="movies"/> Movies<br/>
+							</div>
+							</center>
+							<br/><br/><br/><br/><br/>
+		
+							
+							
+							<!-- Additional preference updates to refine recommendations upon
+								 very first log-in. 	2/16/2015		--> 
+								 
+							<label><b>If you are interested in sports, check your favorite(s):</b></label><br/>
+							<center>
+							<div style="float: left; text-align:left; width: 33%;">
+								<input type="checkbox" name="sportstags[]" value="football"/> Football <br/>
+								<input type="checkbox" name="sportstags[]" value="hockey"/> Hockey <br/>
+								<input type="checkbox" name="sportstags[]" value="basketball"/> Basketball <br/>
+							</div>
+							<div style="float: left; text-align:left; width: 33%;">
+								<input type="checkbox" name="sportstags[]" value="baseball"/> Baseball		<br/>
+								<input type="checkbox" name="sportstags[]" value="soccer"/> Soccer	<br/>
+								<input type="checkbox" name="sportstags[]" value="volleyball"/> Volleyball <br/>
+							</div>	
+							<div style="float: right; text-align:left; width: 33%;">
+								<input type="checkbox" name="sportstags[]" value="tennis"/> Tennis <br/>
+								<input type="checkbox" name="sportstags[]" value="swimming"/> Swimming <br/>
+								<input type="checkbox" name="sportstags[]" value="running"/> Running <br/>
+							</div>
+							</center>
+							<br/><br/><br/><br/><br/>
+		
+							
+							<label><b>If applicable, let us know what kinds of restaurants you like:</b></label><br/>
+							<center>
+							<div style="float: left; text-align:left; width: 33%;">
+								<input type="checkbox" name="foodtags[]" value="american"/> American<br/>
+								<input type="checkbox" name="foodtags[]" value="italian"/> Italian<br/>
+								<input type="checkbox" name="foodtags[]" value="chinese"/> Chinese<br/>
+								<input type="checkbox" name="foodtags[]" value="japanese"/> Japanese/Sushi<br/>
+								<input type="checkbox" name="foodtags[]" value="thai"/> Thai<br/>
+								<input type="checkbox" name="foodtags[]" value="mexican"/> Mexican<br/>
+								<input type="checkbox" name="foodtags[]" value="spanish"/> Spanish<br/>
+								<input type="checkbox" name="foodtags[]" value="indian"/> Indian<br/>
+								<input type="checkbox" name="foodtags[]" value="french"/> French<br/>
+								<input type="checkbox" name="foodtags[]" value="cuban"/> Cuban<br/>
+							</div>	
+							<div style="float: left; text-align:left; width: 33%;">
+								<input type="checkbox" name="foodtags[]" value="korean"/> Korean<br/>		
+								<input type="checkbox" name="foodtags[]" value="greek"/> Greek<br/>
+								<input type="checkbox" name="foodtags[]" value="german"/> German</br>
+								<input type="checkbox" name="foodtags[]" value="latinamerican"/> Latin American<br/>
+								<input type="checkbox" name="foodtags[]" value="mideastern"/> Middle Eastern<br/>
+								<input type="checkbox" name="foodtags[]" value="southern"/> Southern<br/>
+								<input type="checkbox" name="foodtags[]" value="vietnamese"/> Vietnamese<br/>
+								<input type="checkbox" name="foodtags[]" value="tapas"/> Tapas<br/>
+								<input type="checkbox" name="foodtags[]" value="pizzeria"/> Pizzeria<br/>
+								<input type="checkbox" name="foodtags[]" value="pubgrills"/> Pubs/Grills<br/>	
+							</div>	
+							<div style="float: right; text-align:left; width: 33%;">
+								<input type="checkbox" name="foodtags[]" value="barbecue"/> Barbecue<br/>	
+								<input type="checkbox" name="foodtags[]" value="dimsum"/> Dim Sum<br/>
+								<input type="checkbox" name="foodtags[]" value="vegan"/> Vegan<br/>
+								<input type="checkbox" name="foodtags[]" value="deli"/> Deli<br/>
+								<input type="checkbox" name="foodtags[]" value="vegan"/> Vegan<br/>
+								<input type="checkbox" name="foodtags[]" value="fastfood"/> Fast Food<br/>
+								<input type="checkbox" name="foodtags[]" value="seafood"/> Seafood<br/>
+								<input type="checkbox" name="foodtags[]" value="brunch"/> Brunch<br/>
+								<input type="checkbox" name="foodtags[]" value="diner"/> Diner<br/>
+								<input type="checkbox" name="foodtags[]" value="dessert"/> Dessert<br/>
+							</div>
+							</center>
+							<br/><br/><br/>
+		
+							<table>
+								<tr>
+									<td>
+										<label>Your Profile Picture:<label><br/>
+									</td>
+									<td>
+										<form action="wp-content/plugins/grapevine/upload.php" method="post" enctype="multipart/form-data">
+											Select image to upload <br/>
+											<input type="file" name="fileToUpload" id="fileToUpload"><br/>
+											<input type="submit" value="Upload Image" name="submit">
+										</form>
+										<br/><br/>
+									</td>
+								</tr>
+							</table>
+		
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-default" data-dismiss="modal" id="ProfileCancel" name="EventCancel" style="color: black; font-size: 16px;">Cancel</button>
+							<!--<button class="btn btn-lg btn-success">Update Profile</button>-->
+							<input type="submit" class="btn btn-default" id="updateProfile" name="updateProfile" value="Update Profile" style="color: black; font-size: 16px;"/>
+							
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 
 
 	<?php
-
 	// Show the feed now
 	showFeed();
 	?>
 
 	<?php
-	
 	if(isset($_POST['updateProfile'])) {
 		echo "I clicked update profile Button";
 		if(isset($_POST['name'])) 
@@ -255,14 +248,11 @@ $(document).ready(function(){
 
 function addItem(){
 	echo "IN ADD ITEM!";
-	
 	$idButton = isset($_POST['iddetector'])?$_POST['iddetector']:NULL;
     echo "The id of the button clicked is ".$idButton;
 }
 
 
-?>
-<?php
 function updateProfile($userName, $userEmail, $userPhone, $userBio, $userPhoto){
 
   	global $currUser;	
@@ -329,44 +319,27 @@ function updateProfile($userName, $userEmail, $userPhone, $userBio, $userPhoto){
 
 
 function showFeed() {
-	
 	global $wpdb;
 	$current_user = wp_get_current_user();
 	$username = $current_user->user_login;
 	$userid = $current_user->ID;
 	recommendEvents($userid);
-	
-/*
-	echo "<center>Welcome to your Feed! <br/></center><br/>";
-	//echo "<center>Check out all these cool events</center>";
-	
-	$result = $wpdb->get_results( 'SELECT * from wp_grape_events' );
-	
-	foreach ($result as $row) {
-		echo "<div class=\"well\"><h2> ".$row->EventName."</h2>";
-		
-		if ($row->LocationAddress != null) 
-			echo "<label>Location: </label> ".$row->LocationAddress."<br/>";
-			
-		echo "<label>Category: </label> ".$row->Category."<br/>";
-		echo "<label>Description: </label> ".$row->Description."<br/><br/>";
-		
-		echo "<button type=\"button\" class=\"btn btn-default\" id=\"AddToBL\" name=\"AddToBL\" style=\"color:black; font-size: 14px;\">Add to my bucket list!</button>";
-		echo "</div><br/><br/>";
-*/
-	}
+}
+
 	
 /**
  * RECOMMENDER
  *
  */	
 function recommendEvents($userid) {
-			$bl_names= $_POST['blnames'];
-			$event_id = $_POST['eventid'];
-			//var_dump($blnames);
-			//var_dump($event_id);
-			
 	global $wpdb;
+	
+	//used to cap number of events shown in feed
+	$maxNumberOfEvents = 50;
+	$currentNumberOfEvents = 0;
+
+	$bl_names= $_POST['blnames'];
+	$event_id = $_POST['eventid'];
 	
 	/**** GET USERS BUCKETLIST IDs AND BUCKETLIST NAMES ****/
 	$query = 'SELECT * FROM wp_grape_bucketlists WHERE CreatedByUser  =  '.$userid;
@@ -382,176 +355,341 @@ function recommendEvents($userid) {
 		$blnames[$BLname] = $BLID;
 	}
 	echo "<br>";
-	foreach ($blnames as $key => $value) {
-    //echo "Key: $key; Value: $value<br />\n";
-	}
+	echo "<b>Here are some events we think you'll enjoy!</b>\n\n";
 	
-	
-	/****** TAGS *******/
-	//table of tagIDs associated with user
-/****TAKEN OUT AND REPLACED WITH BIG LARGE QUERY --- all lines that start with '//* ' *****/
-		//* $result = $wpdb->get_results('SELECT tagID FROM wp_grape_user_tags WHERE userID='.$userid);
-	
-	//array of eventIDs
-	//* $eventIDs = array();
-	
-	//get all eventIDs associated with all tagIDs
-	//* foreach($result as $row) {
-	//* 	$eventResult = $wpdb->get_results('SELECT event_id FROM wp_grape_event_tags WHERE tag_id='.$row->tagID);
-	//* 	foreach($eventResult as $eventRow) {
-	//* 		array_push($eventIDs, $eventRow->event_id);
-	//* 	}
-	//* }
-		echo "<b>Here are some events we think you'll enjoy!</b>\n\n";
-			
-	//go thru all the eventIDs we've accumulated (all are primary)
-	// go thru all events with those ID's and recommend them
-	//* foreach($eventIDs as $id) {
-	//* echo "id is $id";
-	/*
-		//Check if ID is primary or secondary
-		if ($id>9) {		//secondary ID
-			//get primary key associated with the secondary key
-			$primaryIDs = $wpdb->get_results("SELECT parentID FROM wp_grape_tags_secondary WHERE tagID=".$id);
-			foreach($primaryIDs as $key) { //only one
-				//search for this ID in $eventIDs and take it out
-				if (in_array($key, $eventIDs)
-					unset($
-			}
-		}
-	*/
-	
-	//* $events = $wpdb->get_results('SELECT * FROM wp_grape_events WHERE EventID='.$id);
+	//all events with tags the user has		
 	$events = $wpdb->get_results('
-			SELECT e.EventName, e.LocationAddress, e.Description, e.EventID, e.CreatedByUser
+			SELECT DISTINCT e.EventID, e.EventName, e.LocationAddress, e.Description, e.CreatedByUser
 				FROM wp_grape_users AS u
 				JOIN wp_grape_user_tags AS ut ON u.ID = ut.userID
 				JOIN wp_grape_event_tags AS et ON ut.tagID = et.tag_id
 				JOIN wp_grape_events AS e ON e.EventID = et.event_id
 				WHERE u.ID ='.$userid);
 				
-		foreach($events as $event) {
+	//get all weights for user tags
+	$weightArray=array();
+	$mainweightArray = array();		// associative array of tagIDs to their weight
+	$weightQuery = "SELECT * FROM wp_grape_user_tags WHERE userID=".$userid;
+	$weightResult = $wpdb->get_results($weightQuery);
+	foreach ($weightResult as $row) {
+		$weight=$row->weight;
+		$tagID=$row->tagID;
+		$weightArray['tagID']=(int)$tagID;
+		$weightArray['weight']=(int)$weight;
+		array_push($mainweightArray, $weightArray);
+	}
+	//sort the tags by weight
+	asort($mainweightArray);echo "<br/>";
+	var_dump($mainweightArray);
+	
+	$tagsWithHighWeights = array();
+	foreach($mainweightArray as $m) {
+		array_push($tagsWithHighWeights, $m['tagID']);
+		echo "--".$m['tagID'];
+	}
+	//now select all events with the first tag in $tagsWithHighWeights, then the next, etc.	
+
+
+	foreach($events as $event) {
+		if ($currentNumberOfEvents < $maxNumberOfEvents) {
 			$eventID = $event->EventID;
-			echo "event id is $eventID";
 			
-			//print info for event
-			echo "<div class=\"well\">
-				<h2> ".$event->EventName."</h2>";
-				
-			echo "<label>Created by User: </label> ".$event->CreatedByUser."<br/>";
-				$jpg = 'wp-content/plugins/grapevine/profilepictures/'.$event->CreatedByUser.'_thumb.jpg';
-				if (file_exists($jpg)){
-					echo "<img src=\"$jpg\" alt=\"Profile Picture\" /><br/>";
-				}
-		
-				if ($event->LocationAddress != null) 
-					echo "<label>Location: </label> ".$event->LocationAddress."<br/>";
-				
-				//* echo "<label>Category: </label> ".$event->Category."<br/>";
-				echo "<label>Description: </label> ".$event->Description."<br/><br/>";
+// 			$event_tags = array();
+// 			$qry="SELECT * FROM wp_grape_event_tags WHERE event_id=".$eventID;
+// 			$qryresult = $wpdb->get_results($qry);
+// 			foreach($qryresult as $q) {
+// 				array_push($event_tags, $q->tag_id);
+// 			}
+// 			for($a=0; $a<count($event_tags); $a++) {
+// 				for($b=0; $b<count($tagsWithHighWeights); $b++){
+// 					if($event_tags[$a] == $tagsWithHighWeights[$b])
+// 						//yes add this event to top of feed
+// 						$a=count($event_tags);	//break out of first loop
+// 						break;					//break out of current loop
+// 				}
+// 			}
+			
+			$name = $event->EventName;
+			$createdby = $event->CreatedByUser;
+			$jpg = 'wp-content/plugins/grapevine/profilepictures/'.$event->CreatedByUser.'_thumb.jpg';
+			$loc = $event->LocationAddress;
+			$desc = $event->Description;
+			$nicename = "";
+			
+			$nameq = 'SELECT u.user_nicename FROM wp_grape_users as u WHERE u.ID = '.$createdby;
+			$result = $wpdb->get_results($nameq);
+			foreach ($result as $row) {
+				$nicename = $row->user_nicename;
+			}
 
-				echo "<button id=\"$eventID\" name=\"AddToBL\" type=\"button\" class=\"btn btn-warning popover-toggle\" data-container=\"body\" data-toggle=\"popover\" data-placement=\"right\" rel=\"popover\" title=\"My Bucketlists\">Add to Bucketlist!</button>";
-
-				//echo "<button id=\"$eventID\" class=\"AddToBL\" type=\"button\" title=\"My Bucketlists\" >Add to Bucketlist!</button>";
 				
-				//echo "<input type=\"submit\" name=\"showBLs$eventID\" id=\"$eventID\" value=\"Add to Bucketlist!\">";
-				
-				
-				?>
-				<!-- your popup hidden content -->
-
-				<?php echo "<div class=\"popover_content_wrapper\" id=\"$eventID\">"; ?>
-					<form method="post">
-						<?php
-							echo "<input type='hidden' name='event_id' value='$eventID' />";
-							
-							foreach ($blnames as $key => $value) {
-								echo "<input type=\"checkbox\" name=\"blnames[]\" value=\"$value\"> $key <br>";
+			//print info for event; cap at 50
+			echo "<div class=\"well\">";
+				echo "<div class=\"feedContent\">";
+					echo "<h2> ".$name."</h2>";
+					?>
+					<div class="container">
+						<div class="row">
+							<div class="col-md-1">
+							<?php
+							$jpg = 'wp-content/plugins/grapevine/profilepictures/'.$createdby.'_thumb.jpg';
+							if (file_exists($jpg)){
+								//echo "<img src=\"$jpg\" alt=\"Profile Picture\" /><br/>";
+								echo "<div class='circular' style = 'background-image: url($jpg)'></div>";
 							}
-						?>
-						<input type="submit" name="submitBLs" value="Submit">
-					</form>
+							?>
+							</div>
+							<div class="col-md-4">				
+							<?php echo "<label> Created by User: </label>".$nicename; ?>
+							</div>
+						</div>
+					</div>
+												
+					<div class="container">
+						<div class="row">
+							<div class="col-md-6">			
+								<?php
+								if ($event->LocationAddress != null) 
+									echo "<label>Location: </label> ".$loc."<br/>";
+								echo "<label>Description: </label> ".$desc."<br/><br/>";
+					
+								echo "<button id=\"$eventID\" name=\"AddToBL\" type=\"button\" class=\"btn btn-warning popover-toggle\" data-container=\"body\" data-toggle=\"popover\" data-placement=\"right\" rel=\"popover\" title=\"My Bucketlists\">Add to Bucketlist!</button>";
+								//echo "<button id=\"$eventID\" class=\"AddToBL\" type=\"button\" title=\"My Bucketlists\" >Add to Bucketlist!</button>";
+								//echo "<input type=\"submit\" name=\"showBLs$eventID\" id=\"$eventID\" value=\"Add to Bucketlist!\">";
+								?>
+							</div>
+							<div class="col-md-6">
+								<!-- your popup hidden content -->
+								<?php echo "<div class=\"popover_content_wrapper\" id=\"$eventID\">"; ?>
+									<form method="post">
+										<?php
+										echo "<input type='hidden' name='event_id' value='$eventID' />";
+										
+										foreach ($blnames as $key => $value) {
+											echo "<input type=\"checkbox\" name=\"blnames[]\" value=\"$value\"> $key <br>";
+										}
+										?>
+										<input type="submit" name="submitBLs" value="Submit">
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+					
 				</div>
 			</div>
+		<?php
+		}
+		$currentNumberOfEvents++;
+	} //end of foreach loop
 	
-	<?php
-	} //end foreach loop
+	
+
+	// $events are all the events the user is already associated with (Don't show these again)
+	$alreadyShownEventIDs = array();
+	foreach($events as $event) {
+		array_push($alreadyShownEventIDs, $event->EventID);
+	}
+	// get all the events in the DB
+	$otherEventIDs = array();
+	$query = "SELECT * FROM wp_grape_events";
+	$result = $wpdb->get_results($query);
+	foreach($result as $row) {
+		array_push($otherEventIDs, $row->EventID);
+	}
+	//compare the 2 arrays and filter out eventIDs we already showed
+	$newEventsToShow = array();
+	for($i=0; $i<count($otherEventIDs); $i++) {
+		for($j=0; $j<count($alreadyShownEventIDs); $j++) {
+			if ($otherEventIDs[$i] == $alreadyShownEventIDs[$j])
+				break;
+			if (( $otherEventIDs[$i] != $alreadyShownEventIDs[$j] ) && ( $j==count($alreadyShownEventIDs)-1 ) )
+				array_push($newEventsToShow, $otherEventIDs[$i]);
+		}
+	}
+	
+	//now print out other events that are not associated with the user (not recommended); Fill up to 50
+	if ($currentNumberOfEvents < $maxNumberOfEvents) {
+		showNewEvents($newEventsToShow, $blnames);
+		$currentNumberOfEvents++;
+	}
 	
 	
-		if(isset($_POST['submitBLs'])){		
+	if(isset($_POST['submitBLs'])){		
 		echo "I CLICKED THE SUBMIT BUTTON!";
 			
 		$bl_names= $_POST['blnames'];
 		$event_id = $_POST['event_id'];
-			
-		echo "BL NAMES:\n";
-		var_dump($bl_names);
-			
-		echo "<br/> EVENT ID:\n";
-			var_dump($event_id);
-		echo "<br/><br/><br/>";
 		
-		
-		
-		//Iterate through bucketlists checked and insert Event into BL
-			foreach($bl_names as $bl){
-			$wpdb->insert( 'wp_grape_blJoinEvents',
-					array(	'BucketListID' => $bl,
-							'EventID' => $event_id),
-					array( '%d', '%d' ) );
+		insertEventIntoBLs($bl_names, $event_id);
+	}
 			
-			
-			$query = 'SELECT NumberOfEvents FROM wp_grape_bucketlists WHERE BucketListID  =  '.$bl;
-			$result = $wpdb->get_results($query);
+}
+
+function insertEventIntoBLs($bl_names, $event_id) {
+	global $wpdb;			
 	
-			foreach ($result as $row) {
-				$num = $row->NumberOfEvents;
-				echo "Number of events in bl id $bl is $num\n";
-				$newnum = $num + 1;
-				echo "New Number of events in bl id $bl is $newnum\n";
-			}
-			
-			
-			$update_query = "UPDATE wp_grape_bucketlists SET NumberOfEvents = ".$newnum." WHERE BucketListID = ".$bl;
-			echo "$update_query";
-			$wpdb->query($update_query);
-			
-			}
-			//QUERY FOR EVENT'S TAGS, STORE IN USER TAGS TABLE
+	//Iterate through bucketlists checked and insert Event into BL
+	foreach($bl_names as $bl){
+		$wpdb->insert( 'wp_grape_blJoinEvents',
+				array(	'BucketListID' => $bl,
+						'EventID' => $event_id),
+				array( '%d', '%d' ) );
+		
+		$query = 'SELECT NumberOfEvents FROM wp_grape_bucketlists WHERE BucketListID  =  '.$bl;
+		$result = $wpdb->get_results($query);
+	
+		foreach ($result as $row) {
+			$num = $row->NumberOfEvents;
+			echo "Number of events in bl id $bl is $num\n";
+			$newnum = $num + 1;
+			echo "New Number of events in bl id $bl is $newnum\n";
+		}
+	
+		$update_query = "UPDATE wp_grape_bucketlists SET NumberOfEvents = ".$newnum." WHERE BucketListID = ".$bl;
+		echo "$update_query";
+		$wpdb->query($update_query);
+		
+		//add these tags to be associated with the user and update the weights (goes to events.php function updateWeight())
+		addEventTagsForUser($event_id);
+	}
+
+}
+
+function addEventTagsForUser($event_id){
+	global $wpdb;
+	$current_user = wp_get_current_user();
+	$userID = $current_user->ID;
+	
+	//get all tags associated with this event
+	$tagIDs = array();
+	$query = "SELECT * FROM wp_grape_event_tags WHERE event_id=".$event_id;
+	$result = $wpdb->get_results($query);
+	foreach ($result as $row) {
+		array_push($tagIDs, $row->tag_id);
 	}
 	
-	/*
-		foreach ($events as $event){
-		$eventID = $event->EventID;
-		echo "HEYY EVENT ID IS $eventID";
-				if(isset($_POST['showBLs$eventID'])) {
-					displayPopover($blnames, $eventID);
-					if (isset($_POST['submitBLs$eventID'])) {
-						$bucketlists = $_POST['blnames'];
-						bucketlistsSelected($eventID, $bucketlists);
+	//get all the user's tags
+	$usersTags = array();
+	$query2 = "SELECT * FROM wp_grape_user_tags WHERE userID=".$userID;
+	$result2 = $wpdb->get_results($query2);
+	foreach($result2 as $row){
+		array_push($usersTags, $row->tagID);	
+	}
+	
+	//insert these tags with user if she doesn't have them yet
+	//	if she has them, just increment the weight counter
+	if (count($usersTags) == 0) {
+ 		foreach($tagIDs as $tagID) {
+ 			$wpdb->insert( 'wp_grape_user_tags',
+				array(	'userID' => $userID,
+						'tagID' => $tagID),
+				array( '%d', '%d' ) );	
+		}
+ 	} else {
+		for($i=0; $i<count($tagIDs); $i++) {
+				for($j=0; $j<count($usersTags); $j++) {
+					if ( $tagIDs[$i] == $usersTags[$j] ) {	// user already has that tag; just increment counter
+						updateWeight($userID,$usersTags[$j]);
+						break;								//because user already has that tag; increment $tagIDs
+						}		
+					if (( $tagIDs[$i] != $usersTags[$j] ) && ( $j==count($usersTags)-1 ) ) {
+						//echo "we should insert this id: $tagIDs[$i]";
+					    $wpdb->insert( 'wp_grape_user_tags',
+		 					array(	'userID' => $userID,
+		 							'tagID' => $tagIDs[$i]),
+		 					array( '%d', '%d' ) );	
 					}
 				}
 		}
-	*/
-	//* }
-		
+ 	}
 }
 
-function useInfo(){
-//Check if submit button hit
-	if(isset($_POST['submitBLs'])){		
-			echo "I CLICKED THE SUBMIT BUTTON!";
-			
-			$bl_names= $_POST['blnames'];
-			$event_id = $_POST['event_id'];
-			
-			echo "BL NAMES:\n";
-			//var_dump($bucketlists);
-			
-			echo "<br/> EVENT ID:\n";
-			//var_dump($eventID);
+
+function showNewEvents($newEventsToShow, $blnames) {
+	global $wpdb;
+	//get all info for eventIDs
+	foreach ($newEventsToShow as $event) {
+		$query = "SELECT * FROM wp_grape_events WHERE EventID=".$event;
+		$result = $wpdb->get_results($query);
+		foreach($result as $row) {
+		
+			$eventID = $row->EventID;
+			$name = $row->EventName;
+			$createdby = $row->CreatedByUser;
+			$jpg = 'wp-content/plugins/grapevine/profilepictures/'.$row->CreatedByUser.'_thumb.jpg';
+			$loc = $row->LocationAddress;
+			$desc = $row->Description;
+			$nicename = "";
+			$nameq = 'SELECT u.user_nicename FROM wp_grape_users as u WHERE u.ID = '.$createdby;
+			$result2 = $wpdb->get_results($nameq);
+			foreach ($result2 as $row2) {
+				$nicename = $row2->user_nicename;
+			}
+		
+			//print info for event; cap at 50
+				echo "<div class=\"well\">";
+					echo "<div class=\"feedContent\">";
+						echo "<h2> ".$name."</h2>";
+						?>
+						<div class="container">
+							<div class="row">
+								<div class="col-md-1">
+								<?php
+								$jpg = 'wp-content/plugins/grapevine/profilepictures/'.$createdby.'_thumb.jpg';
+								if (file_exists($jpg)){
+									//echo "<img src=\"$jpg\" alt=\"Profile Picture\" /><br/>";
+									echo "<div class='circular' style = 'background-image: url($jpg)'></div>";
+								}
+								?>
+								</div>
+								<div class="col-md-4">				
+								<?php echo "<label> Created by User: </label>".$nicename; ?>
+								</div>
+							</div>
+						</div>
+													
+						<div class="container">
+							<div class="row">
+								<div class="col-md-6">			
+									<?php
+									if ($loc != null) 
+										echo "<label>Location: </label> ".$loc."<br/>";
+									echo "<label>Description: </label> ".$desc."<br/><br/>";
+						
+									echo "<button id=\"$eventID\" name=\"AddToBL\" type=\"button\" class=\"btn btn-warning popover-toggle\" data-container=\"body\" data-toggle=\"popover\" data-placement=\"right\" rel=\"popover\" title=\"My Bucketlists\">Add to Bucketlist!</button>";
+									//echo "<button id=\"$eventID\" class=\"AddToBL\" type=\"button\" title=\"My Bucketlists\" >Add to Bucketlist!</button>";
+									//echo "<input type=\"submit\" name=\"showBLs$eventID\" id=\"$eventID\" value=\"Add to Bucketlist!\">";
+									?>
+								</div>
+								<div class="col-md-6">
+									<!-- your popup hidden content -->
+									<?php echo "<div class=\"popover_content_wrapper\" id=\"$eventID\">"; ?>
+										<form method="post">
+											<?php
+											echo "<input type='hidden' name='event_id' value='$eventID' />";
+											
+											foreach ($blnames as $key => $value) {
+												echo "<input type=\"checkbox\" name=\"blnames[]\" value=\"$value\"> $key <br>";
+											}
+											?>
+											<input type="submit" name="submitBLs" value="Submit">
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+						
+					</div>
+				</div>
+		<?php
+		}
 	}
+
 }
+
+
+
 
 function displayPopover($blnames, $eventID) {
 ?>
@@ -568,32 +706,4 @@ function displayPopover($blnames, $eventID) {
 		</form>   
 	</div>
 <?php
-}
-
-function bucketlistsSelected($eventID, $bucketlists) {
-//Check if submit button hit
-		//if(isset($_POST['submitBLs'])){		
-		//	echo "I CLICKED THE SUBMIT BUTTON!";
-			
-		//	$bl_names= $_POST['blnames'];
-		//	$event_id = $_POST['event_id'];
-			
-			echo "BL NAMES:\n";
-			var_dump($bucketlists);
-			
-			echo "<br/> EVENT ID:\n";
-			var_dump($eventID);
-			
-			//Iterate through bucketlists checked and insert Event into BL
-			foreach($bl_names as $bl){
-			$wpdb->insert( 'wp_grape_blJoinEvents',
-					array(	'BucketListID' => $bl,
-							'EventID' => $event_id),
-					array( '%d', '%d' ) );
-			
-			}
-			//QUERY FOR EVENT'S TAGS, STORE IN USER TAGS TABLE
-		//}
-
-
 }

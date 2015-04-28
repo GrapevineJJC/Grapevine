@@ -1,13 +1,13 @@
 <script src="http://maps.googleapis.com/maps/api/js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script>
 google.maps.event.addDomListener(window, 'load', initialize);
 
 function initialize() { 
-  	var myCenter = new google.maps.LatLng(42.335549, -71.168495);
+  	
   	var bounds = new google.maps.LatLngBounds();
 
 	var mapProp = {
-    	center:myCenter,
     	zoom:10,
    		panControl:true,
 		zoomControl:true,
@@ -19,7 +19,49 @@ function initialize() {
   	};
   
   	var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
-  
+  	
+  	if (navigator.geolocation) {
+     	navigator.geolocation.getCurrentPosition(function (position) {
+         		currentLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+     			map.setCenter(currentLocation);
+     			alert("Current location is (" + position.coords.latitude + ", " + position.coords.longitude + ").");
+     	});
+ 	}
+ 	
+ 	$(document).ready(function(){
+			
+			$( "#getAddressArray" ).click( function(){
+				alert("here");
+				//get the form data and then serialize that
+            	var dataString = $("#ajaxRequestForm").serialize();
+            	
+                //start ajax request
+                var request = $.ajax({
+                    url: "wp-content/plugins/grapevine/maps.php",
+                    type: "GET",
+                    data: dataString,
+                    dataType: "json"
+                });
+                    
+                request.done ( function( data ) {  
+                    	setMarkers(data);
+                });
+                    
+                request.fail (function(jqXHR, textStatus) {
+						alert( "Request failed: " + textStatus );
+				 });
+			});
+
+	});
+
+  	/* var LatLngArray;
+  	var markers = new Array();
+  	LatLngArray = LatLngPairs.split("] ");
+  	
+  	for (int i = 0; i < LatLngArray.length; i++) {
+  		markers[i] = LatLngArray[i];
+  	}   */
+  	  
   	// Multiple Markers
 	var markers = [
     		[42.335549, -71.168495],
@@ -36,7 +78,7 @@ function initialize() {
         marker = new google.maps.Marker({
             				position: position,
             				map: map,
-        });
+    });
         
         // Allow each marker to have an info window    
         google.maps.event.addListener(marker, 'click', (function(marker, i) {
@@ -55,14 +97,6 @@ function initialize() {
         this.setZoom(14);
         google.maps.event.removeListener(boundsListener);
     });
-        
-  	// SINGLE MARKER	
- 	/* var marker = new google.maps.Marker({
-  			position:myCenter,
-  			animation:google.maps.Animation.DROP,
-  			title:'Click to zoom'
-			});
-  	marker.setMap(map);	*/
 
   	// ZOOM WHEN CLICKING ON MARKER
  	/* google.maps.event.addListener(marker, 'click', function() {
@@ -88,4 +122,11 @@ function initialize() {
   		infowindow.open(map,marker);
 }*/
 
+function setMarkers(data) {
+	alert("got here!");
+	/*for (int i=0; i<data.length; i++) {
+		print(data[i]);
+	}*/
+}
+	
 </script>

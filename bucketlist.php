@@ -6,47 +6,72 @@ function testBucketlist(){
 	$current_user = wp_get_current_user();
 	$username = $current_user->user_login;
 	$currID = $current_user->ID;
-
+	
 	echo "<div class=\"pageHeader\">My Bucketlists</div><br/>";
+	
+	echo '<a href="#blModal" role="button" class="btn btn-lg btn-primary" data-toggle="modal">+</a><br/><br/>';
 
 	//Query bucketlist database for user's list of bucketlists
 	$query = 'SELECT * FROM wp_grape_bucketlists WHERE CreatedByUser  =  '.$currID;
 	
 	$result = $wpdb->get_results($query);
 ?>
-<div class="row">
-<?php	
+<!-- <div class="row"> -->
+<?php
 	//Query for current users info. Pre-populate editprofile form.
-	foreach ($result as $row) {
-		echo "<div class=\"col-md-4\">";
-		echo "<div class=\"blBackground\">";
-		$BLname = $row->BucketListName;
-		$desc = $row->Description;
-		$numEvents = $row->NumberOfEvents;
-		echo "<p class=\"blHeader\">".$BLname."</p>";
-		echo "<p class=\"blDesc\">".$desc."</p><br/><br><br/>";
-		
-		echo "<p class=\"blNumEvents\">".$numEvents." event(s)</p>";
-		echo "</div>";
-		echo "</div>";
+	$blids = array();
+?>	
+	<div class="well">
+	
+	<div class="container">
+	<div class="row">
 
+	<?php foreach ($result as $row) { ?>
+ 			
+ 			<div class="col-md-4">
+				<form method="post">
+					
+					<?php
+					$BLID = $row->BucketListID;
+					array_push($blids, $BLID);
+					
+					$BLname = $row->BucketListName;
+					$desc = $row->Description;
+					$numEvents = $row->NumberOfEvents;
+					
+					echo "<button id=\"$BLID\" name=\"$BLID\" class=\"blButton\" value=\"$BLID\" />";
+						echo "<input type=\"hidden\" class=\"op\" name=\"op\" value=\"$BLID\" />";
+						
+						echo "<p class=\"blHeader\">".$BLname."</p>";
+						echo "<p class=\"blDesc\">".$desc."</p><br/><br><br/>";
+						echo "<p class=\"blHeader\">".$BLID."</p>";
+						
+						echo "<p class=\"blNumEvents\">".$numEvents." event(s)</p>";
+					echo "</button>";
+				echo "</form>";
+			echo "</div>";
 		}
 		echo "</div>";
+		echo "</div>";
+		echo "</div>";
+		
+			foreach($blids as $id){
+				if(isset($_POST[$id])){
+					displayBL($id);
+				}
+			}
 ?>
 
 <script type="text/javascript">
 $(document).ready(function(){
-	$('.form')[0].reset();
+	$('.form')[0].reset(
+	);
 
 		$(".btn").click(function(){
 			$("#blModal").modal('show');
 		});
-			
 });
 </script>
-
-
-    <center><a href="#blModal" role="button" class="btn btn-lg btn-primary" data-toggle="modal">+</a></center>
     
     <!-- Modal HTML -->
     <div id="blModal" class="modal fade">
@@ -57,24 +82,23 @@ $(document).ready(function(){
                     <h1 class="modal-title">Create Your Bucketlist</h1>
                 </div>
                <form method="post"> 
-                <div class="modal-body">                    
-                     <center>
-                    <img src="http://2.bp.blogspot.com/-n1da2kDa_ZY/UXeCtSd5KJI/AAAAAAAAAMw/0ktttvBNCWU/s1600/check_box.png" alt="checkbox picture" height="50" width="50" /><br/>
-
-                    <p>Give it a name and description!</p></center>
-                    
-
-                   <label>Bucketlist Name:</label><br/>
-                   <input type="text" name="BLname" id="BLname" placeholder="E.g. Senior Year Bucketlist" /><br/><br/>
-                    
-                    <label>Description:</label><br/>
-                    <textarea id="BLdesc" name="BLdesc" placeholder="E.g. Restaurants and bars to try, spring break destinations, and adventures in Boston!" row="20" cols="50" maxlength="150"></textarea><br/><br/>
-		 			
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal" id="BLCancel" name="BLCancel" style="color: black; font-size: 16px;">Cancel</button>
-                    <input type="submit" class="btn btn-default" id="CreateBucketList" name="CreateBucketList" value="Create" style="color: black; font-size: 16px;"/>
-                </div>
+					<div class="modal-body">                    
+						 <center>
+						<img src="http://2.bp.blogspot.com/-n1da2kDa_ZY/UXeCtSd5KJI/AAAAAAAAAMw/0ktttvBNCWU/s1600/check_box.png" alt="checkbox picture" height="50" width="50" /><br/>
+	
+						<p>Give it a name and description!</p></center>
+						
+					   <label>Bucketlist Name:</label><br/>
+					   <input type="text" name="BLname" id="BLname" placeholder="E.g. Senior Year Bucketlist" /><br/><br/>
+						
+						<label>Description:</label><br/>
+						<textarea id="BLdesc" name="BLdesc" placeholder="E.g. Restaurants and bars to try, spring break destinations, and adventures in Boston!" row="20" cols="50" maxlength="150"></textarea><br/><br/>
+						
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal" id="BLCancel" name="BLCancel" style="color: black; font-size: 16px;">Cancel</button>
+						<input type="submit" class="btn btn-default" id="CreateBucketList" name="CreateBucketList" value="Create" style="color: black; font-size: 16px;"/>
+					</div>
                 </form>
             </div>
         </div>
@@ -104,4 +128,96 @@ function insertBL($BLname, $BLdesc){
 						'Description' => $BLdesc,
 						'NumberOfEvents' => 0),
 				array( '%d', '%s', '%s', '%d' ) );	
+}
+
+function displayBL($id){	
+	global $wpdb;
+	$query = 'SELECT e.EventID, e.EventName, e.LocationAddress, e.Description, e.category, blj.isCompleted
+			from wp_grape_blJoinEvents as blj
+			JOIN wp_grape_events as e
+			WHERE e.EventID=blj.EventID
+			AND blj.BucketlistID = '.$id;
+	
+	$result = $wpdb->get_results($query);
+	
+	//print info for event
+	foreach ($result as $row) {
+			
+			$eventID = $row->EventID;
+			$name = $row->EventName;
+			$loc = $row->LocationAddress;
+			$desc = $row->Description;
+			$completed = $row->isCompleted;
+			$category = $row->category;
+			
+			echo "<div class=\"well\">";
+			echo "<div class=\"feedContent\">";
+			echo "<div class=\"blHeader\"> ".$name."</div>";
+			
+
+			//echo "<input type=\"checkbox\" name=\"completed\" data-size=\"xl\">";
+			?>			
+							<div class="row">
+								<div class="col-md-2">
+								<?php getCat($category); ?>
+								</div>
+								
+								<div class="col-md-6"><?php
+								//if ($event->LocationAddress != null) 
+								echo "<label>Location: </label> ".$loc."<br/>";
+								echo "<label>Description: </label> ".$desc."<br/><br/>"; ?>
+								</div>
+								
+								<div class="col-md-4">
+								<?php echo "<input type=\"checkbox\" id=\"$eventID\" class=\"blCheck\" name=\"completed\">";?>
+								</div>
+							</div>
+						</div>
+			</div>
+			</div>
+<?php
+	}
+}
+
+function getCat($category){
+			switch($category){
+				case 1:
+					//echo "Restaraunts<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/dining.png' height=\"100\" width=\"100\" />";
+					break;
+				case 2:
+					//echo "Sports<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/baseball.png' height=\"100\" width=\"100\" />";
+					break;
+				case 3:
+					//echo "Fitness<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/fit.jpg' height=\"100\" width=\"100\" />";
+					break;
+				case 4:
+					//echo "Bars<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/bar.png' height=\"100\" width=\"100\" />";
+					break;
+				case 5:
+					//echo "Music<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/music.png' height=\"100\" width=\"100\" />";
+					break;
+				case 6:
+					//echo "Theater<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/theater.png' height=\"100\" width=\"100\" />";
+					break;
+				case 7:
+					//echo "Museums<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/museum.png' height=\"100\" width=\"100\" />";
+					break;
+				case 8:
+					//echo "Gaming<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/gaming.png' height=\"100\" width=\"100\" />";
+					break;
+				case 9:
+					//echo "Outdoors<br/>";
+					echo "<img src='wp-content/plugins/grapevine/img/categories/outdoors.png' height=\"100\" width=\"100\" />";
+					break;
+				default: echo "";
+						break;				
+			}
 }
