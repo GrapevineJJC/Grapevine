@@ -12,9 +12,17 @@ function feed() {
 	global $wpdb;
 	
 	
-	?>
+?>
 <!-- Button HTML (to Trigger Modal) -->
 <div class="feedHeader">Explore & Create Events <a href="#myModal" role="button" class="btn btn-large btn-primary" data-toggle="modal">+</a> </div>
+
+
+<!-- Search bar -->
+<form method="post">
+		<input type="text" name="search" placeholder="Search" />
+		<input type="submit" name="submit" value="Go" />
+</form>
+ 
  
 <!-- Modal HTML -->
 <div id="myModal" class="modal fade">
@@ -61,8 +69,10 @@ function feed() {
         </div>
     </div>
 </div>
-	
-	<?php
+
+
+
+	<?php	
 	if(isset($_POST['createEvent'])){
 		$eventaddress = null;
 		
@@ -75,37 +85,88 @@ function feed() {
 		$eventdesc = stripslashes($_POST['eventdesc']);
 		$eventcategory = $_POST['eventcategory'];
 		
-	
 		
-		if (insertEvent($eventname, $eventaddress, $eventdesc, $eventcategory)) {
-			//echo "<br/> <br/> Thanks, $username!  You have successfully created an event. <br/>";
-			$eventID = selectEventID($eventname);
-			insertEventTag($eventID, $eventcategory);
-			insertUserTag($eventcategory);
-			discoverSecondaryTags($eventID);
+		if (eventNotInDB($eventname)) {
+			if (insertEvent($eventname, $eventaddress, $eventdesc, $eventcategory)) {
+				//echo "<br/> <br/> Thanks, $username!  You have successfully created an event. <br/>";
+				$eventID = selectEventID($eventname);
+				insertEventTag($eventID, $eventcategory);
+				insertUserTag($eventcategory);
+				discoverSecondaryTags($eventID);
+			} 		
+		} else {
+			echo "<h2>That event already exists!  Here it is:</h2>";
+			$bucketlists = getBucketlists();
+			$query = "SELECT * FROM wp_grape_events WHERE EventName='".$eventname."'";
+			$result = $wpdb->get_results($query);
+			foreach($result as $row) {
+				$eventID = $row->EventID;
+				$name = $row->EventName;
+				$createdby = $row->CreatedByUser;
+				$jpg = 'wp-content/plugins/grapevine/profilepictures/'.$row->CreatedByUser.'_thumb.jpg';
+				$loc = $row->LocationAddress;
+				$desc = $row->Description;
+				$nicename = "";
+				$nameq = 'SELECT u.user_nicename FROM wp_grape_users as u WHERE u.ID = '.$createdby;
+				$result2 = $wpdb->get_results($nameq);
+				foreach ($result2 as $row2) {
+					$nicename = $row2->user_nicename;
+				}
+				printThisEvent($eventID, $name, $createdby, $jpg, $loc, $desc, $nicename, $bucketlists);
+			}
 		}
-	}
-	
-	
-	//GET USERS BUCKETLIST IDs AND NAMES
-	$query = 'SELECT * FROM wp_grape_bucketlists WHERE CreatedByUser  =  '.$current_user->ID;
-	$result = $wpdb->get_results($query);
-
-	$blnames = array();
-	$blids = array();
-	$numEvents = array();
-	
-	foreach ($result as $row) {
-		$BLname = $row->BucketListName;
-		array_push($blnames, $BLname);
+	} else if (isset($_POST['submit'])) {
+	//if submit button is set (search)
+		$search = $_POST['search'];
 		
-		$BLID = $row->BucketListID;
-		array_push($blids, $BLID);
+		$bucketlists = getBucketlists();
+				
+		$query = 'select e.EventID, e.EventName, e.LocationAddress, e.Description, e.category, e.CreatedByUser, t.tagName
+					from wp_grape_events as e
+					JOIN wp_grape_tags_primary as t on e.category = t.tagID 
+					where e.Description LIKE \'%'.$search.'%\' OR e.EventName LIKE \'%'.$search.'%\' OR t.tagName LIKE \'%'.$search.'%\'';
+				
+		$result = $wpdb->get_results($query);
+	
+		foreach ($result as $row) {
+				$eventID = $row->EventID;
+				$category = $row->category;
+				$name = $row->EventName;
+				$createdby = $row->CreatedByUser;
+				$jpg = 'wp-content/plugins/grapevine/profilepictures/'.$event->CreatedByUser.'_thumb.jpg';
+				$loc = $row->LocationAddress;
+				$desc = $row->Description;
+				$nicename = "";
+				
+				$nameq = 'SELECT u.user_nicename FROM wp_grape_users as u WHERE u.ID = '.$createdby;
+				$result = $wpdb->get_results($nameq);
+				foreach ($result as $row) {
+					$nicename = $row->user_nicename;
+				}
+				printThisEvent($eventID, $name, $createdby, $jpg, $loc, $desc, $nicename, $bucketlists);	
+		}
+	} else {
+		showFeed();
 	}
+	
+// 	//GET USERS BUCKETLIST IDs AND NAMES
+// 	$query = 'SELECT * FROM wp_grape_bucketlists WHERE CreatedByUser  =  '.$current_user->ID;
+// 	$result = $wpdb->get_results($query);
+// 
+// 	$blnames = array();
+// 	$blids = array();
+// 	$numEvents = array();
+// 	
+// 	foreach ($result as $row) {
+// 		$BLname = $row->BucketListName;
+// 		array_push($blnames, $BLname);
+// 		
+// 		$BLID = $row->BucketListID;
+// 		array_push($blids, $BLID);
+// 	}
 	
 	
 	if ($current_user->returning_user == 0 ) {
-		//echo '$user->returning_user is'.$current_user->returning_user.' in the if statement!';
 		// redirect them to the default place
 		$wpdb->update( 'wp_grape_users',
 			array(	'returning_user' => 1),
@@ -114,9 +175,10 @@ function feed() {
 			array( '%d' )	);						// WHERE format
 			launchModal();							// TODO
 		//return home_url("/?page_id=44");	//First time logging in, make bucketlist.
-	} else {
 		showFeed();
-	}
+	} 
+	
+
 }
 
 
@@ -275,9 +337,10 @@ function launchModal() {
 	<?php
 	// Show the feed now
 	showFeed();
-	?>
 
-	<?php
+?>
+
+<?php
 	if(isset($_POST['updateProfile'])) {
 		echo "I clicked update profile Button";
 		if(isset($_POST['name'])) 
@@ -303,6 +366,7 @@ function launchModal() {
 	
 		updateProfile($userName, $userEmail, $userPhone, $userBio, $userPhoto);
 	}
+
 }
 
 
@@ -730,6 +794,41 @@ function displayPopover($blnames, $eventID) {
 <?php
 }
 
-function createModal(){
+function getBucketlists(){
+	global $wpdb;
+	
+	$current_user = wp_get_current_user();
+	$userid = $current_user->ID;
+	
+	/**** GET USERS BUCKETLIST IDs AND BUCKETLIST NAMES ****/
+	$query = 'SELECT * FROM wp_grape_bucketlists WHERE CreatedByUser  =  '.$userid;
 
+	$result = $wpdb->get_results($query);
+
+	$blnames = array();
+	
+	foreach ($result as $row) {
+		$BLname = $row->BucketListName;
+		$BLID = $row->BucketListID;
+
+		$blnames[$BLname] = $BLID;
+	}
+	
+	return $blnames;
+}
+
+
+function eventNotInDB($eventname) {
+
+	global $wpdb;
+	
+	$query = "SELECT * FROM wp_grape_events WHERE LOWER(EventName)='".strtolower($eventname)."'";
+	$result = $wpdb->get_results($query);
+	
+	$count = count($result);
+	if ( $count > 0 ) {
+		return false; 
+	}
+	else
+		return true;
 }

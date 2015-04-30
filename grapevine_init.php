@@ -168,6 +168,9 @@ add_shortcode('addToBucketlist', 'addToBucketlist');
 include 'maps.php';
 add_shortcode('maps', 'maps');
 
+include 'turnToXML.php';
+add_shortcode('turnToXML', 'turnToXML');
+
 include 'edit_propic.php';
 add_shortcode('propic', 'propic');
 

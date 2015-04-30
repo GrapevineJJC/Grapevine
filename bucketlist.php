@@ -123,8 +123,8 @@ $(document).ready(function(){
 		}
 		
 	if(isset($_POST['CreateBucketList'])){
-		$BLname = $_POST['BLname'];
-		$BLdesc = $_POST['BLdesc'];
+		$BLname = stripslashes($_POST['BLname']);
+		$BLdesc = stripslashes($_POST['BLdesc']);
 		insertBL($BLname, $BLdesc);
 	}
 }
