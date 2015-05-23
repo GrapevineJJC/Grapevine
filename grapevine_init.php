@@ -206,10 +206,16 @@ function my_login_redirect( $redirect_to, $request, $user ) {
 	$current_user = wp_get_current_user();
 	$username = $current_user->user_login;
 	
+<<<<<<< Updated upstream
 	//echo 'user is '.$username;
 	global $wpdb;
+=======
+>>>>>>> Stashed changes
 	
-	return home_url("/?page_id=66");
+	//echo 'user is '.$username;
+	global $wpdb;
+	return home_url("/?page_id=53");
+
 // 				
 // 	//if ( isset( $user->returning_user ) && is_array( $user->returning_user) ) {
 // 		echo '$user->returning_user is'.$user->returning_user;

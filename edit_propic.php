@@ -7,6 +7,19 @@ function propic(){
 	$currID = $current_user->ID;
 	//echo "current user id is $current_user->ID<br/><br/>";
 	
+<<<<<<< Updated upstream
+=======
+		
+	if ($current_user->returning_user == 0 ) {
+		// redirect them to the default place
+		$wpdb->update( 'wp_grape_users',
+			array(	'returning_user' => 1),
+			array(	'ID' => $current_user->ID),		// WHERE clause
+			array( '%d' ),							// data format
+			array( '%d' )	);						// WHERE format
+	} 
+	
+>>>>>>> Stashed changes
 ?>
 <!-- Edit Profile Picture -->
 			<center>
@@ -50,6 +63,11 @@ function propic(){
 				case 3:
 					echo "";
 					break;
+<<<<<<< Updated upstream
+=======
+				default:
+					break;
+>>>>>>> Stashed changes
 			}
 			
 			?>

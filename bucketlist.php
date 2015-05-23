@@ -14,7 +14,6 @@ function testBucketlist(){
 
 	//Query bucketlist database for user's list of bucketlists
 	$query = 'SELECT * FROM wp_grape_bucketlists WHERE CreatedByUser  =  '.$currID;
-	
 	$result = $wpdb->get_results($query);
 ?>
 <!-- <div class="row"> -->
@@ -38,6 +37,16 @@ function testBucketlist(){
 					$desc = $row->Description;
 					$numEvents = $row->NumberOfEvents;
 					
+<<<<<<< Updated upstream
+=======
+					$query2='SELECT count(*) AS count1 FROM wp_grape_blJoinEvents WHERE isCompleted=1 AND BucketListID='.$BLID;
+					$result2=$wpdb->get_results($query2);
+					//$totalCompleted = 0;
+					foreach($result2 as $row2){
+						$totalCompleted = $row2->count1;
+					}
+					
+>>>>>>> Stashed changes
 					echo "<button id=\"$BLID\" name=\"$BLID\" class=\"blButton\" value=\"$BLID\" />";
 						echo "<input type=\"hidden\" class=\"op\" name=\"op\" value=\"$BLID\" />";
 						
@@ -46,6 +55,10 @@ function testBucketlist(){
 						//echo "<p class=\"blHeader\">".$BLID."</p>";
 						
 						echo "<p class=\"blNumEvents\">".$numEvents." event(s)</p>";
+<<<<<<< Updated upstream
+=======
+						echo "<p class=\"blNumEvents\">".$totalCompleted." completed</p>";
+>>>>>>> Stashed changes
 					echo "</button>";
 				echo "</form>";
 			echo "</div>";
@@ -108,6 +121,7 @@ $(document).ready(function(){
 
 		if(isset($_POST['update'])){
 			$updates = $_POST['completed'];
+<<<<<<< Updated upstream
 			//var_dump($updates);			
 	
 			//Iterate through bucketlists checked and insert Event into BL
@@ -119,6 +133,17 @@ $(document).ready(function(){
 				$wpdb->query($update_query);
 			}
 			
+=======
+	
+			//Iterate through bucketlists checked and insert Event into BL
+			//if (count($updates) > 0) {
+				foreach($updates as $ups){
+				
+				$update_query = "UPDATE wp_grape_blJoinEvents SET isCompleted = 1 WHERE EventID = ".$ups;
+				$wpdb->query($update_query);
+			}
+			//}
+>>>>>>> Stashed changes
 			
 		}
 		

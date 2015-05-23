@@ -115,6 +115,10 @@ function feed() {
 				printThisEvent($eventID, $name, $createdby, $jpg, $loc, $desc, $nicename, $bucketlists);
 			}
 		}
+<<<<<<< Updated upstream
+=======
+		showFeed();
+>>>>>>> Stashed changes
 	} else if (isset($_POST['submit'])) {
 	//if submit button is set (search)
 		$search = $_POST['search'];
@@ -146,6 +150,7 @@ function feed() {
 				printThisEvent($eventID, $name, $createdby, $jpg, $loc, $desc, $nicename, $bucketlists);	
 		}
 	} else {
+<<<<<<< Updated upstream
 		showFeed();
 	}
 	
@@ -177,6 +182,27 @@ function feed() {
 		//return home_url("/?page_id=44");	//First time logging in, make bucketlist.
 		showFeed();
 	} 
+=======
+		showFeed();
+	}
+	
+// 	//GET USERS BUCKETLIST IDs AND NAMES
+// 	$query = 'SELECT * FROM wp_grape_bucketlists WHERE CreatedByUser  =  '.$current_user->ID;
+// 	$result = $wpdb->get_results($query);
+// 
+// 	$blnames = array();
+// 	$blids = array();
+// 	$numEvents = array();
+// 	
+// 	foreach ($result as $row) {
+// 		$BLname = $row->BucketListName;
+// 		array_push($blnames, $BLname);
+// 		
+// 		$BLID = $row->BucketListID;
+// 		array_push($blids, $BLID);
+// 	}
+	
+>>>>>>> Stashed changes
 	
 
 }
@@ -486,6 +512,15 @@ function recommendEvents($userid) {
 				JOIN wp_grape_event_tags AS et ON ut.tagID = et.tag_id
 				JOIN wp_grape_events AS e ON e.EventID = et.event_id
 				WHERE u.ID ='.$userid);
+<<<<<<< Updated upstream
+=======
+		
+	//check to see if user has any events
+	if(count($events) == 0) {
+		showAllEvents($blnames);
+	}
+	
+>>>>>>> Stashed changes
 				
 	//get all weights for user tags
 	$weightArray=array();
@@ -592,6 +627,40 @@ function recommendEvents($userid) {
 			
 }
 
+<<<<<<< Updated upstream
+=======
+function showAllEvents($blnames) {
+	global $wpdb;
+	$currentNumberOfEvents=0;
+	$maxNumberOfEvents=50;
+	
+	$query = "SELECT * FROM wp_grape_events";
+	$events = $wpdb->get_results($query);
+	foreach($events as $event) {
+		if ($currentNumberOfEvents < $maxNumberOfEvents) {
+			$eventID = $event->EventID;
+			$category = $event->category;
+			$name = $event->EventName;
+			$createdby = $event->CreatedByUser;
+			$jpg = 'wp-content/plugins/grapevine/profilepictures/'.$event->CreatedByUser.'_thumb.jpg';
+			$loc = $event->LocationAddress;
+			$desc = $event->Description;
+			$nicename = "";
+			
+			$nameq = 'SELECT u.user_nicename FROM wp_grape_users as u WHERE u.ID = '.$createdby;
+			$result = $wpdb->get_results($nameq);
+			foreach ($result as $row) {
+				$nicename = $row->user_nicename;
+			}
+
+
+		printThisEvent($eventID, $name, $createdby, $jpg, $loc, $desc, $nicename, $blnames);		
+		}
+		$currentNumberOfEvents++;
+	} //end of foreach loop
+}
+
+>>>>>>> Stashed changes
 
 
 function insertEventIntoBLs($bl_names, $event_id) {
@@ -609,6 +678,7 @@ function insertEventIntoBLs($bl_names, $event_id) {
 	
 		foreach ($result as $row) {
 			$num = $row->NumberOfEvents;
+<<<<<<< Updated upstream
 			echo "Number of events in bl id $bl is $num\n";
 			$newnum = $num + 1;
 			echo "New Number of events in bl id $bl is $newnum\n";
@@ -616,11 +686,72 @@ function insertEventIntoBLs($bl_names, $event_id) {
 	
 		$update_query = "UPDATE wp_grape_bucketlists SET NumberOfEvents = ".$newnum." WHERE BucketListID = ".$bl;
 		echo "$update_query";
+=======
+			//echo "Number of events in bl id $bl is $num\n";
+			$newnum = $num + 1;
+			//echo "New Number of events in bl id $bl is $newnum\n";
+		}
+	
+		$update_query = "UPDATE wp_grape_bucketlists SET NumberOfEvents = ".$newnum." WHERE BucketListID = ".$bl;
+		//echo "$update_query";
+>>>>>>> Stashed changes
 		$wpdb->query($update_query);
 		
 		//add these tags to be associated with the user and update the weights (goes to events.php function updateWeight())
 		addEventTagsForUser($event_id);
 	}
+<<<<<<< Updated upstream
+
+}
+
+function addEventTagsForUser($event_id){
+	global $wpdb;
+	$current_user = wp_get_current_user();
+	$userID = $current_user->ID;
+	
+	//get all tags associated with this event
+	$tagIDs = array();
+	$query = "SELECT * FROM wp_grape_event_tags WHERE event_id=".$event_id;
+	$result = $wpdb->get_results($query);
+	foreach ($result as $row) {
+		array_push($tagIDs, $row->tag_id);
+	}
+	
+	//get all the user's tags
+	$usersTags = array();
+	$query2 = "SELECT * FROM wp_grape_user_tags WHERE userID=".$userID;
+	$result2 = $wpdb->get_results($query2);
+	foreach($result2 as $row){
+		array_push($usersTags, $row->tagID);	
+	}
+	
+	//insert these tags with user if she doesn't have them yet
+	//	if she has them, just increment the weight counter
+	if (count($usersTags) == 0) {
+ 		foreach($tagIDs as $tagID) {
+ 			$wpdb->insert( 'wp_grape_user_tags',
+				array(	'userID' => $userID,
+						'tagID' => $tagID),
+				array( '%d', '%d' ) );	
+		}
+ 	} else {
+		for($i=0; $i<count($tagIDs); $i++) {
+				for($j=0; $j<count($usersTags); $j++) {
+					if ( $tagIDs[$i] == $usersTags[$j] ) {	// user already has that tag; just increment counter
+						updateWeight($userID,$usersTags[$j]);
+						break;								//because user already has that tag; increment $tagIDs
+						}		
+					if (( $tagIDs[$i] != $usersTags[$j] ) && ( $j==count($usersTags)-1 ) ) {
+						//echo "we should insert this id: $tagIDs[$i]";
+					    $wpdb->insert( 'wp_grape_user_tags',
+		 					array(	'userID' => $userID,
+		 							'tagID' => $tagIDs[$i]),
+		 					array( '%d', '%d' ) );	
+					}
+				}
+		}
+ 	}
+=======
 
 }
 
@@ -698,11 +829,111 @@ function showNewEvents($newEventsToShow, $blnames) {
 		}
 	}
 
+>>>>>>> Stashed changes
 }
 
 
+function showNewEvents($newEventsToShow, $blnames) {
+	global $wpdb;
+	//get all info for eventIDs
+	foreach ($newEventsToShow as $event) {
+		$query = "SELECT * FROM wp_grape_events WHERE EventID=".$event;
+		$result = $wpdb->get_results($query);
+		foreach($result as $row) {
+		
+			$eventID = $row->EventID;
+			$name = $row->EventName;
+			$createdby = $row->CreatedByUser;
+			$jpg = 'wp-content/plugins/grapevine/profilepictures/'.$row->CreatedByUser.'_thumb.jpg';
+			$loc = $row->LocationAddress;
+			$desc = $row->Description;
+			$nicename = "";
+			$nameq = 'SELECT u.user_nicename FROM wp_grape_users as u WHERE u.ID = '.$createdby;
+			$result2 = $wpdb->get_results($nameq);
+			foreach ($result2 as $row2) {
+				$nicename = $row2->user_nicename;
+			}
+			printThisEvent($eventID, $name, $createdby, $jpg, $loc, $desc, $nicename, $blnames);
+		}
+	}
+
+}
+
+<<<<<<< Updated upstream
 
 
+
+function printThisEvent($eventID, $name, $createdby, $jpg, $loc, $desc, $nicename, $blnames){
+	//print info for event; cap at 50
+	echo "<div class=\"well\">";
+	echo "<div class=\"feedContent\">";
+	echo "<div class=\"blHeader\"> ".$name."</div>";
+	?>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-1">
+					<?php
+					$jpg = 'wp-content/plugins/grapevine/profilepictures/'.$createdby.'_thumb.jpg';
+					$png = 'wp-content/plugins/grapevine/profilepictures/'.$createdby.'_thumb.png';	
+					$gif = 'wp-content/plugins/grapevine/profilepictures/'.$createdby.'_thumb.gif';
+					$jpeg = 'wp-content/plugins/grapevine/profilepictures/'.$createdby.'_thumb.jpeg';						
+					if (file_exists($jpg)){
+						echo "<div class='circular' style = 'background-image: url($jpg)'></div>";
+					}
+					else if (file_exists($jpeg)){
+							echo "<div class='circular' style = 'background-image: url($jpeg)'></div>";
+					}
+					else if (file_exists($png)){
+						echo "<div class='circular' style = 'background-image: url($png)'></div>";
+					}
+					
+					else if (file_exists($gif)){
+							echo "<div class='circular' style = 'background-image: url($gif)'></div>";
+					}
+					?>
+				</div>
+				<div class="col-md-5 paddedDiv createdBy">			
+					<?php echo "<label>Created by User: </label> $nicename"; ?>
+				</div>
+				<div class="col-md-6 myBucketLists">			
+					<?php echo "MY BUCKETLISTS"; ?>
+				</div>
+			</div>
+		</div>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6">			
+					<?php
+					if ($loc != null) 
+						echo "<label>Location: </label> ".$loc."<br/>";
+					echo "<label>Description: </label> ".$desc."<br/><br/>";
+		
+					//echo "<button id=\"$eventID\" name=\"AddToBL\" type=\"button\" class=\"btn btn-warning popover-toggle\" data-container=\"body\" data-toggle=\"popover\" data-placement=\"right\" rel=\"popover\" title=\"My Bucketlists\">Add to Bucketlist!</button>";
+					//echo "<button id=\"$eventID\" class=\"AddToBL\" type=\"button\" title=\"My Bucketlists\" >Add to Bucketlist!</button>";
+					//echo "<input type=\"submit\" name=\"showBLs$eventID\" id=\"$eventID\" value=\"Add to Bucketlist!\">";
+					?>
+				</div>
+				<div class="col-md-6">
+					<!-- your popup hidden content -->
+					<?php echo "<div class=\"popover_content_wrapper\" id=\"$eventID\">"; ?>
+						<form method="post">
+							<?php
+							echo "<input type='hidden' name='event_id' value='$eventID' />";
+							
+							foreach ($blnames as $key => $value) {
+								echo "<input type=\"checkbox\" name=\"blnames[]\" value=\"$value\"> $key <br>";
+							}
+							?>
+							<input type="submit" name="submitBLs" value="Submit">
+						</form>
+					</div>
+				</div>
+			</div>
+	<?php
+	echo "</div>";
+	echo "</div>";
+	echo "</div>";
+=======
 function printThisEvent($eventID, $name, $createdby, $jpg, $loc, $desc, $nicename, $blnames){
 	//print info for event; cap at 50
 	echo "<div class=\"well\">";
@@ -815,11 +1046,58 @@ function getBucketlists(){
 	}
 	
 	return $blnames;
+>>>>>>> Stashed changes
 }
 
 
 function eventNotInDB($eventname) {
 
+<<<<<<< Updated upstream
+function displayPopover($blnames, $eventID) {
+?>
+	<div>
+		<form method="post">
+			<?php
+				echo "<input type='hidden' name='event_id' value='$eventID' />";
+				 
+				foreach ($blnames as $key => $value) {
+					echo "<input type=\"checkbox\" name=\"blnames[]\" value=\"$value\"> $key <br>";
+				}
+			echo "<input type=\"submit\" name=\"submitBLs$eventID\" value=\"Submit\">";
+			?>
+		</form>   
+	</div>
+<?php
+}
+
+function getBucketlists(){
+	global $wpdb;
+	
+	$current_user = wp_get_current_user();
+	$userid = $current_user->ID;
+	
+	/**** GET USERS BUCKETLIST IDs AND BUCKETLIST NAMES ****/
+	$query = 'SELECT * FROM wp_grape_bucketlists WHERE CreatedByUser  =  '.$userid;
+
+	$result = $wpdb->get_results($query);
+
+	$blnames = array();
+	
+	foreach ($result as $row) {
+		$BLname = $row->BucketListName;
+		$BLID = $row->BucketListID;
+
+		$blnames[$BLname] = $BLID;
+	}
+	
+	return $blnames;
+}
+
+
+function eventNotInDB($eventname) {
+
+=======
+>>>>>>> Stashed changes
 	global $wpdb;
 	
 	$query = "SELECT * FROM wp_grape_events WHERE LOWER(EventName)='".strtolower($eventname)."'";

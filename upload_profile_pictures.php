@@ -101,7 +101,11 @@ if ($uploadOk == 0) {
 		else{
 			//echo "Copy success. Now resizing \n";
 			resize(300, $medium, $original);
+<<<<<<< Updated upstream
 			header('Location: http://cscilab.bc.edu/~baconju/foo/?page_id=85&error=success');
+=======
+			header('Location: http://cscilab.bc.edu/~baconju/foo/?page_id=85&error=3');
+>>>>>>> Stashed changes
 		}                  
     } else {
        // echo "Sorry, there was an error uploading your file.";

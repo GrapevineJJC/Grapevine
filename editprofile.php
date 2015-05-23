@@ -1,13 +1,28 @@
+<<<<<<< Updated upstream
 <?php
 function editprofile(){
 
 include('plugins/accordionPlugin.js');
 
 	global $wpdb;	
+=======
+<?php
+function editprofile(){
+
+include('plugins/accordionPlugin.js');
+
+?>
+<h1><center>Update Your Preferences</center><br/></h1>
+<?php
+
+	global $wpdb;
+>>>>>>> Stashed changes
 	
 	$current_user = wp_get_current_user();
 	$currID = $current_user->ID;
 	//echo "current user id is $current_user->ID<br/><br/>";
+
+	
 	
 	$query = 'SELECT * FROM wp_grape_users WHERE ID  =  '.$currID;
 	
@@ -19,9 +34,15 @@ include('plugins/accordionPlugin.js');
 		$email = $row->user_email;
 	}
 	
+<<<<<<< Updated upstream
 	echo "current id $currID \n";
 	echo "current nicename $nicename \n";
 	echo "current email $email \n";
+=======
+	//echo "current id $currID \n";
+	//echo "current nicename $nicename \n";
+	//echo "current email $email \n";
+>>>>>>> Stashed changes
 
 	showTags();
 	updateProfileWithNewTags();
@@ -186,15 +207,25 @@ function showTags(){
 <?php	
 }
 
+<<<<<<< Updated upstream
 
 
+=======
+
+
+>>>>>>> Stashed changes
 function updateProfileWithNewTags() {
   	global $wpdb;
 	$current_user = wp_get_current_user();
 	$currID = $current_user->ID;
 	$currName = $current_user->user_nicename;
+<<<<<<< Updated upstream
   	echo "current user is  $currID <br>";
   	echo "current user is $currName <br>";
+=======
+  	//echo "current user is  $currID <br>";
+  	//echo "current user is $currName <br>";
+>>>>>>> Stashed changes
   	
   	$newTags = array();
 	if ( isset($_POST["updatePro"]) ) {

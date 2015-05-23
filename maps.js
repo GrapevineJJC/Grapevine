@@ -1,6 +1,7 @@
 <script src="http://maps.googleapis.com/maps/api/js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
 <script>
+<<<<<<< Updated upstream
 
 //google.maps.event.addDomListener(window, 'load', initialize);
 
@@ -34,6 +35,12 @@ function load() {
   }
 });
 /*
+=======
+google.maps.event.addDomListener(window, 'load', initialize);
+
+function initialize() { 
+  	
+>>>>>>> Stashed changes
   	var bounds = new google.maps.LatLngBounds();
 
 	var mapProp = {
@@ -56,6 +63,7 @@ function load() {
      			//alert("Current location is (" + position.coords.latitude + ", " + position.coords.longitude + ").");
      	});
  	}
+<<<<<<< Updated upstream
  	
  	
  	
@@ -122,6 +130,12 @@ function load() {
     		[42.335549, -71.168495],
         	[40.350000, -71.200000],
         	[44.234234, -71.189284]
+=======
+  	  
+  	// Multiple Markers
+	var markers = [
+    		[42.335549, -71.168495]
+>>>>>>> Stashed changes
     ];
     
     // Display multiple markers on a map
@@ -134,7 +148,11 @@ function load() {
         marker = new google.maps.Marker({
             				position: position,
             				map: map,
+<<<<<<< Updated upstream
     });
+=======
+        });
+>>>>>>> Stashed changes
         
         // Allow each marker to have an info window    
         google.maps.event.addListener(marker, 'click', (function(marker, i) {
@@ -153,6 +171,17 @@ function load() {
         this.setZoom(14);
         google.maps.event.removeListener(boundsListener);
     });
+<<<<<<< Updated upstream
+=======
+        
+  	// SINGLE MARKER	
+ 	/* var marker = new google.maps.Marker({
+  			position:myCenter,
+  			animation:google.maps.Animation.DROP,
+  			title:'Click to zoom'
+			});
+  	marker.setMap(map);	*/
+>>>>>>> Stashed changes
 
   	// ZOOM WHEN CLICKING ON MARKER
  	/* google.maps.event.addListener(marker, 'click', function() {
@@ -177,6 +206,7 @@ function load() {
   		});
   		infowindow.open(map,marker);
 }*/
+<<<<<<< Updated upstream
 /*
 function setMarkers(data) {
 	alert("got here!");
@@ -210,4 +240,7 @@ function downloadUrl(url,callback) {
 
     function doNothing() {}
 	
+=======
+
+>>>>>>> Stashed changes
 </script>
